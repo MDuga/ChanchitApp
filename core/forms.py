@@ -47,3 +47,16 @@ class RegistroForm(forms.ModelForm):
         if Usuario.objects.filter(email=email).exists():
             raise forms.ValidationError("Este correo ya está registrado.")
         return email
+    
+
+#========================================================================
+
+class LoginForm(forms.Form):
+    
+    email = forms.EmailField(label="email")
+             
+    def clean_email(self):
+        email = self.cleaned_data.get("email")
+        if Usuario.objects.filter(email=email).exists():
+            return email
+        raise forms.ValidationError("El usuario no está registrado.")
