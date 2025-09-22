@@ -42,7 +42,40 @@ def login_usuario(request):
 def pagina_inicio(request):
     usuario_id = request.session.get("usuario_id")
     usuario = Usuario.objects.get(id=usuario_id)
-    return render(request, 'core/panel/inicio.html', {"usuario": usuario})
+        
+    saldo_actual = 0
+    date_actual = date.today()
+   
+    # movimientos a la fecha
+        
+    ingresos_actual_list = Ingresos.objects.filter(
+        usuario = usuario, 
+        date_ingreso__lte = date_actual    
+        )
+    
+    ingresos_actual = 0
+    for i in ingresos_actual_list:                
+        ingresos_actual += i.monto
+
+
+    egresos_actual_list = Egresos.objects.filter(
+        usuario = usuario, 
+        date_egreso__lte = date_actual
+        )  
+    
+    egresos_actual = 0
+    for e in egresos_actual_list:                
+        egresos_actual += e.monto   
+       
+    saldo_actual = ingresos_actual + egresos_actual
+    
+
+    contexto = {
+        "usuario": usuario,                
+        "saldo_actual": saldo_actual
+    }
+   
+    return render(request, 'core/panel/inicio.html', contexto)
 
 #====================================================================
 
@@ -91,8 +124,9 @@ def query_mes(request):
     saldo_final = 0
     movimientos = []
     
+    query_mes = QueryMes_Form(request.GET or None)
     if request.method == "GET":
-        query_mes = QueryMes_Form(request.GET)
+        
         if query_mes.is_valid():  
             month = query_mes.cleaned_data["month"]
             year = query_mes.cleaned_data["year"]

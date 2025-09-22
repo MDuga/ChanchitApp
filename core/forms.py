@@ -105,6 +105,7 @@ class QueryMes_Form(forms.Form):
 
              
 #========================================================================
+# Para hacer búsqueda por fecha, a implementar más adelante (sin uso)
 class QueryFechas_Form(forms.Form):
     
     inicio = forms.DateField(label="Inicio")

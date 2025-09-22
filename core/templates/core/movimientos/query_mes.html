@@ -16,13 +16,6 @@
             <button type="submit" class="btn btn-primary w-100">Consultar</button>
           </form>
 
-          <!-- Errores -->
-          {% if messages %}
-            {% for message in messages %}
-              <div class="alert alert-warning mt-3">{{ message }}</div>
-            {% endfor %}
-          {% endif %}
-
           {% if saldo_inicial is not None %}
             <hr>
             <!-- Saldo inicial -->
