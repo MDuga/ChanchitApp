@@ -1,0 +1,64 @@
+{% extends "core/base.html" %}
+
+{% block title %} Balance del Mes {% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card shadow">
+        <div class="card-body">
+          <h2 class="mb-4 text-center">Consultar balance por mes</h2>
+
+          <!-- Formulario -->
+          <form method="get">
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary w-100">Consultar</button>
+          </form>
+
+          <!-- Errores -->
+          {% if messages %}
+            {% for message in messages %}
+              <div class="alert alert-warning mt-3">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+
+          {% if saldo_inicial is not None %}
+            <hr>
+            <!-- Saldo inicial -->
+            <h5>💼 Saldo al inicio del mes:</h5>
+            <p><strong>{{ saldo_inicial }} UYU</strong></p>
+
+            <!-- Movimientos -->
+            <h5>📑 Movimientos del mes:</h5>
+            {% if movimientos %}
+              <ul class="list-group mb-3">
+                {% for mov in movimientos %}
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span>
+                      <strong>{{ mov.tipo|capfirst }}:</strong> {{ mov.descripcion }} 
+                      <br><small class="text-muted">{{ mov.fecha }}</small>
+                    </span>
+                    <span class="{% if mov.monto >= 0 %}text-success{% else %}text-danger{% endif %}">
+                      {{ mov.monto }} UYU
+                    </span>
+                  </li>
+                {% endfor %}
+              </ul>
+            {% else %}
+              <p>No hay movimientos para este mes.</p>
+            {% endif %}
+
+            <!-- Saldo final -->
+            <h5>📊 Saldo a fin de mes:</h5>
+            <h3 class="text-center {% if saldo_final >= 0 %}text-success{% else %}text-danger{% endif %}">
+              {{ saldo_final }} UYU
+            </h3>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

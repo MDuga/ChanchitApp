@@ -36,7 +36,7 @@
                 <main class="col-9 col-md-10 py-4 px-5">
                     <div class="d-flex justify-content-end align-items-center mb-3">
                         {% if usuario %}
-                            <span class="text-muted">Bienvenido, {{ usuario.username|title }}</span>
+                            <span class="text-muted">Bienvenido, {{ usuario.usuario|title }}</span>
                         {% endif %}
                     </div>
                     {% block content %}
