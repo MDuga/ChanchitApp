@@ -202,6 +202,12 @@ def query_mes(request):
         "saldo_final": saldo_final
     }
     return render(request, "core/movimientos/query_mes.html", contexto)
-            
-            
+
+#====================================================================================
+def pagina_principal(request):
+
+    return render(request, 'core/panel/principal.html')
+
+#====================================================================================
+
             

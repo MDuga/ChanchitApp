@@ -1,0 +1,18 @@
+
+{% extends "core/base_publica.html" %}
+{% load static %}
+
+{% block title %}ChanchitApp - Bienvenido{% endblock %}
+
+{% block content %}
+<div class="text-center">
+    <img src="{% static 'img/ChanchitApp.png' %}" alt="ChanchitApp Logo" style="max-height: 200px;" class="mb-4">
+    <h1 class="mb-4 fw-bold">¡Bienvenido a ChanchitApp!</h1>
+    <p class="mb-5 text-muted">La app para adolescentes que quieren aprender a gestionar su dinero.</p>
+
+    <div class="d-grid gap-3 col-6 mx-auto">
+        <a href="{% url 'login_usuario' %}" class="btn btn-primary btn-lg">Ingresar</a>
+        <a href="{% url 'crear_usuario' %}" class="btn btn-outline-secondary btn-lg">Registrarse</a>
+    </div>
+</div>
+{% endblock %}
