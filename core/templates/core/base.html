@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -19,7 +20,8 @@
                 <!-- Menú lateral izquierdo -->
                 <nav class="col-12 col-md-2 bg-light border-end py-4 px-3 d-md-block d-flex flex-row align-items-center justify-content-between">
                     <div class="d-flex align-items-center w-100">
-                        <h5 class="mb-0 d-none d-md-block">ChanchitApp</h5>
+                        <img src="{% static 'img/ChanchitApp.png' %}" alt="ChanchitApp Logo" style="max-height: 100px;" class="mb-1">
+                        
                         <button class="navbar-toggler d-md-none ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
                             <span class="navbar-toggler-icon"></span>
                         </button>
