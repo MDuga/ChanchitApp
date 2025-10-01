@@ -1,50 +1,11 @@
 from django.shortcuts import render, redirect
-from core.models import Usuario, Ingresos, Egresos
-from core.forms import RegistroForm, LoginForm, IngresosForm, EgresosForm, QueryMes_Form, QueryFechas_Form
+from core.models import Ingresos, Egresos
+from core.forms import IngresosForm, EgresosForm, QueryMes_Form, QueryFechas_Form
+from usuarios.utils import obtener_usuario
 from django.contrib import messages
 from datetime import date
+from calendar import monthrange
 
-#from django.contrib.auth import authenticate, login
-
-# Create your views here.
-
-def crear_usuario(request):
-    if request.method == "POST":
-        formulario = RegistroForm(request.POST)
-        if formulario.is_valid():
-            formulario.save()
-            email = formulario.cleaned_data["email"] 
-            usuario = Usuario.objects.get(email=email) 
-            request.session["usuario_id"] = usuario.id
-            messages.success(request, "Usuario registrado con éxito.")
-            return redirect('pagina_inicio')
-    else: 
-        formulario = RegistroForm()
-
-    return render(request, "core/usuarios/usuario_form.html", {"form": formulario})
-
-#=========================================================================
-
-def login_usuario(request):
-    if request.method == "POST":
-        formulario = LoginForm(request.POST)
-        if formulario.is_valid(): 
-            email = formulario.cleaned_data["email"] 
-            usuario = Usuario.objects.get(email=email) 
-            request.session["usuario_id"] = usuario.id           
-            messages.success(request, "Login realizado con éxito.")
-            return redirect('pagina_inicio')
-    else:
-        formulario = LoginForm()
-    
-    return render(request, "core/usuarios/login_form.html", {"form": formulario})
-#====================================================================
-#Auxiliar 
-def obtener_usuario(request):
-    usuario_id = request.session.get("usuario_id")
-    return Usuario.objects.get(id=usuario_id)
-    
-#=================================================
 
 def pagina_inicio(request):
     
@@ -127,19 +88,21 @@ def egreso_monto(request):
 
 #====================================================================
 #Auxiliar para query_mes
-def fecha_inicio_mes(request):
+def fecha_mes(request):
     
     month_year = QueryMes_Form(request.GET or None)
     
     if request.method == "GET" and month_year.is_valid(): 
     # if request.GET and month_year.is_valid(): 
         month = month_year.cleaned_data["month"]
-        year = month_year.cleaned_data["year"]  
+        year = month_year.cleaned_data["year"]        
         date_inicio_mes = date(year, month, 1)
+        ultimo_dia = monthrange(year, month)[1]
+        date_fin_mes = date(year, month, ultimo_dia)  
     
-        return date_inicio_mes, year, month, month_year
+        return date_inicio_mes, date_fin_mes, month_year
     
-    return date(1, 1, 1), 1, 1, month_year    # se pone como fecha 01/01/01 porque con None da error
+    return date(1, 1, 1), date(1, 1, 1), month_year    # se pone como fecha 01/01/01 porque con None da error
 
 #=================================================
 #Auxiliar para query_mes
@@ -156,7 +119,7 @@ def saldo_inicial_query(request, usuario, date_inicio_mes):
          for modelo, campo_fecha in tipo_movimientos:
             filtros = {
             'usuario': usuario,
-            f"{campo_fecha}__lte": date_inicio_mes
+            f"{campo_fecha}__lt": date_inicio_mes
             }
             modelos_filtrados_list = modelo.objects.filter(**filtros)
                             
@@ -170,7 +133,7 @@ def saldo_inicial_query(request, usuario, date_inicio_mes):
 def query_mes(request):    
     
     usuario = obtener_usuario(request)
-    date_inicio_mes, year, month, month_year = fecha_inicio_mes(request)
+    date_inicio_mes, date_fin_mes, month_year = fecha_mes(request)
     
     if not date_inicio_mes:
     
@@ -198,8 +161,8 @@ def query_mes(request):
          for modelo, campo_fecha, tipo in tipo_movimientos:
             filtros = {
             'usuario': usuario,
-            f"{campo_fecha}__month": month,
-            f"{campo_fecha}__year": year
+            f"{campo_fecha}__gte": date_inicio_mes,
+            f"{campo_fecha}__lte": date_fin_mes
             }
            
             modelos_filtrados_list = modelo.objects.filter(**filtros)
