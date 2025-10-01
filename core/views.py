@@ -39,35 +39,36 @@ def login_usuario(request):
     
     return render(request, "core/usuarios/login_form.html", {"form": formulario})
 #====================================================================
-def pagina_inicio(request):
+#Auxiliar 
+def obtener_usuario(request):
     usuario_id = request.session.get("usuario_id")
-    usuario = Usuario.objects.get(id=usuario_id)
-        
+    return Usuario.objects.get(id=usuario_id)
+    
+#=================================================
+
+def pagina_inicio(request):
+    
+    usuario = obtener_usuario(request)       
     saldo_actual = 0
     date_actual = date.today()
    
     # movimientos a la fecha
         
-    ingresos_actual_list = Ingresos.objects.filter(
-        usuario = usuario, 
-        date_ingreso__lte = date_actual    
-        )
-    
-    ingresos_actual = 0
-    for i in ingresos_actual_list:                
-        ingresos_actual += i.monto
+    tipo_movimientos = [
+    (Ingresos, 'date_ingreso'),
+    (Egresos, 'date_egreso')
+    ]
 
-
-    egresos_actual_list = Egresos.objects.filter(
-        usuario = usuario, 
-        date_egreso__lte = date_actual
-        )  
-    
-    egresos_actual = 0
-    for e in egresos_actual_list:                
-        egresos_actual += e.monto   
-       
-    saldo_actual = ingresos_actual + egresos_actual
+    for modelo, campo_fecha in tipo_movimientos:
+        filtros = {
+            'usuario': usuario,
+            f"{campo_fecha}__lte": date_actual
+        }
+        modelos_filtrados_list = modelo.objects.filter(**filtros)
+                
+        for i in modelos_filtrados_list:                
+            saldo_actual += i.monto
+        
     
     #CARDS para template
 
@@ -88,8 +89,9 @@ def pagina_inicio(request):
 #====================================================================
 
 def ingreso_monto(request):
-    usuario_id = request.session.get("usuario_id")
-    usuario = Usuario.objects.get(id=usuario_id)
+    
+    usuario = obtener_usuario(request)
+
     if request.method == "POST":
         formulario = IngresosForm(request.POST)
         if formulario.is_valid():                     
@@ -106,8 +108,9 @@ def ingreso_monto(request):
 #====================================================================
 
 def egreso_monto(request):
-    usuario_id = request.session.get("usuario_id")
-    usuario = Usuario.objects.get(id=usuario_id)
+
+    usuario = obtener_usuario(request)
+
     if request.method == "POST":
         formulario = EgresosForm(request.POST)
         if formulario.is_valid():                     
@@ -123,15 +126,11 @@ def egreso_monto(request):
     return render(request, "core/movimientos/egresos_form.html", {"form": formulario, "usuario": usuario})
 
 #====================================================================
-#Auxiliar para query_mes - Nº1
-def obtener_usuario(request):
-    usuario_id = request.session.get("usuario_id")
-    return Usuario.objects.get(id=usuario_id)
-    
-#=================================================
-#Auxiliar para query_mes - Nº2
+#Auxiliar para query_mes
 def fecha_inicio_mes(request):
+    
     month_year = QueryMes_Form(request.GET or None)
+    
     if request.method == "GET" and month_year.is_valid(): 
     # if request.GET and month_year.is_valid(): 
         month = month_year.cleaned_data["month"]
@@ -143,30 +142,28 @@ def fecha_inicio_mes(request):
     return date(1, 1, 1), 1, 1, month_year    # se pone como fecha 01/01/01 porque con None da error
 
 #=================================================
-#Auxiliar para query_mes - Nº3
+#Auxiliar para query_mes
 def saldo_inicial_query(request, usuario, date_inicio_mes):    
-    
+        
     saldo_inicial = 0
+
+    tipo_movimientos = [
+    (Ingresos, 'date_ingreso'),
+    (Egresos, 'date_egreso')
+    ]
+
     if request.method == "GET":
-        ingresos_saldo_inicio = Ingresos.objects.filter(
-            usuario = usuario, 
-            date_ingreso__lt = date_inicio_mes    
-            )
+         for modelo, campo_fecha in tipo_movimientos:
+            filtros = {
+            'usuario': usuario,
+            f"{campo_fecha}__lte": date_inicio_mes
+            }
+            modelos_filtrados_list = modelo.objects.filter(**filtros)
+                            
+            for i in modelos_filtrados_list:                
+                saldo_inicial += i.monto       
+                
 
-        egresos_saldo_inicio = Egresos.objects.filter(
-            usuario = usuario, 
-            date_egreso__lt = date_inicio_mes          
-            )
-
-        ingresos_saldo_monto= 0
-        for i in ingresos_saldo_inicio:                
-            ingresos_saldo_monto += i.monto
-
-        egresos_saldo_monto = 0
-        for e in egresos_saldo_inicio:                
-            egresos_saldo_monto += e.monto
-
-    saldo_inicial = ingresos_saldo_monto + egresos_saldo_monto
     return saldo_inicial
 
 #=================================================
@@ -186,46 +183,39 @@ def query_mes(request):
         })
            
     
-    saldo_inicial = saldo_inicial_query(request, usuario, date_inicio_mes)
-        
+    saldo_inicial = saldo_inicial_query(request, usuario, date_inicio_mes)      
     saldo_final = 0
     movimientos = []
-    
-    if request.method == "GET":            
-        ingresos_list = Ingresos.objects.filter(
-            usuario = usuario, 
-            date_ingreso__month = month, 
-            date_ingreso__year = year
-            )
-        
-        egresos_list = Egresos.objects.filter(
-            usuario = usuario, 
-            date_egreso__month = month, 
-            date_egreso__year = year
-            )                   
+    movimientos_mes_monto= 0
 
-        ingresos_mes_monto= 0
-        for i in ingresos_list:                
-            ingresos_mes_monto += i.monto
-            movimientos.append({
-            "tipo": "Ingreso",
-            "monto": i.monto,
-            "descripcion": i.descripcion,
-            "fecha": i.date_ingreso
-            })
-        
-        egresos_mes_monto = 0
-        for e in egresos_list:                
-            egresos_mes_monto += e.monto
-            movimientos.append({
-            "tipo": "Egreso",
-            "monto": e.monto,
-            "descripcion": e.descripcion,
-            "fecha": e.date_egreso
-            })
-        
-        saldo_final = ingresos_mes_monto + egresos_mes_monto + saldo_inicial
-        movimientos.sort(key=lambda x: x["fecha"])
+
+    tipo_movimientos = [
+    (Ingresos, 'date_ingreso', 'Ingresos'),
+    (Egresos, 'date_egreso', 'Egresos')
+    ]
+
+    if request.method == "GET":
+         for modelo, campo_fecha, tipo in tipo_movimientos:
+            filtros = {
+            'usuario': usuario,
+            f"{campo_fecha}__month": month,
+            f"{campo_fecha}__year": year
+            }
+           
+            modelos_filtrados_list = modelo.objects.filter(**filtros)
+               
+            for i in modelos_filtrados_list:                
+                movimientos_mes_monto += i.monto
+                movimientos.append({
+                "tipo": tipo,
+                "monto": i.monto,
+                "descripcion": i.descripcion,
+                "fecha": getattr(i,campo_fecha)
+                })
+            
+    
+            saldo_final = saldo_inicial + movimientos_mes_monto
+            movimientos.sort(key=lambda x: x["fecha"])
 
     else:
         messages.error(request, "No hay movimientos para el período seleccionado")
