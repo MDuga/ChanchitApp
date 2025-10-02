@@ -55,10 +55,17 @@
                 <!-- Contenido inicio -->
                 <main class="col-9 col-md-10 py-4 px-5">
                     <div class="d-flex justify-content-end align-items-center mb-3">
-                        {% if usuario %}
-                            <span class="text-muted me-3">Bienvenido, {{ usuario.usuario|title }}</span>
-                            <a href="{% url 'pagina_principal' %}" class="btn btn-sm btn-outline-danger">Cerrar sesión</a>
+                        {% if request.user.is_authenticated %}
+                            <img src="{{ request.user.avatar.url }}" 
+                                alt="Avatar" 
+                                class="rounded-circle border me-2" 
+                                style="width:50px; height:50px; object-fit:cover;">
+                            <a href="{% url 'vista_perfil' %}" class="text-decoration-none me-4">
+                                Bienvenido, {{ request.user.username|title }}
+                            </a>
+                            <a href="{% url 'logout' %}" class="btn btn-sm btn-outline-danger">Cerrar sesión</a>
                         {% endif %}
+
                     </div>
                     {% block content %}
                         {% if messages %}
@@ -83,6 +90,9 @@
         </footer>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    
+    {% block extra_scripts %}{% endblock %}
+    
     </body>
 
 </html>

@@ -1,64 +1,40 @@
 from django import forms
-from usuarios.models import Usuario
-from django.contrib.auth import authenticate
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth import authenticate, get_user_model
 
-class RegistroForm(forms.ModelForm):
-    confirm_password = forms.CharField(max_length=100, widget=forms.PasswordInput())
+User = get_user_model()
+
+
+class RegistroForm(UserCreationForm):
+    email = forms.EmailField(required=True)
+    
+    class Meta:
+        model = User
+        fields = ["username", "email", "password1", "password2"]
+        help_texts = {
+            "username": None,
+            "password1": None,
+            "password2": None
+        }
+        error_messages = {
+            "username": {"unique": "Ese usuario ya existe, probá con otro 😅"},
+            "email": {"unique": "Este correo ya está registrado 🚨"}
+        }
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["confirm_password"].label = "Confirma contraseña"
+        self.fields["username"].label = "Nombre de usuario"
+        self.fields["email"].label = "Correo electrónico"
+        self.fields["password1"].label = "Contraseña"
+        self.fields["password2"].label = "Confirmar contraseña"
 
-    class Meta:
-        model = Usuario
-        exclude = ["date_joined"]
-        widgets = {
-            "password": forms.PasswordInput()
-        }
-        labels = {
-            "usuario": "Nombre de usuario",
-            "email": "Correo electrónico",
-            "password": "Contraseña"
-        }
-        error_messages = {
-            "usuario": {
-                "unique": "nombre de usuario existente",
-            },
-            "email": {
-                "unique": "usuario ya registrado",
-            }
-        }
-
-    def clean(self):
-        password = self.cleaned_data.get("password")
-        confirm_password = self.cleaned_data.get("confirm_password")
-        if password != confirm_password:
-            raise forms.ValidationError("Contraseña incorrecta")
-        return self.cleaned_data
+    def clean_password2(self):
+        password1 = self.cleaned_data.get("password1")
+        password2 = self.cleaned_data.get("password2")
+        if password1 and password2 and password1 != password2:
+            raise forms.ValidationError("Ups! Las contraseñas no coinciden 🥺")
+        return password2
     
-    def clean_usuario(self):
-        usuario = self.cleaned_data.get("usuario")
-        if Usuario.objects.filter(usuario=usuario).exists():
-            raise forms.ValidationError("Este usuario ya está registrado.")
-        return usuario
-
-    def clean_email(self):
-        email = self.cleaned_data.get("email")
-        if Usuario.objects.filter(email=email).exists():
-            raise forms.ValidationError("Este correo ya está registrado.")
-        return email
-    
-
-#========================================================================
-# class LoginForm(forms.Form):
-    
-#     email = forms.EmailField(label="email")
-             
-#     def clean_email(self):
-#         email = self.cleaned_data.get("email")
-#         if Usuario.objects.filter(email=email).exists():
-#             return email
-#         raise forms.ValidationError("El usuario no está registrado.")
 
 #========================================================================
 
@@ -77,3 +53,15 @@ class LoginForm(forms.Form):
         self.user = usuario
         return self.cleaned_data
         
+#========================================================================
+
+class UsuarioEditForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ["username", "avatar", "first_name", "last_name"]
+        widgets = {
+            "username": forms.TextInput(attrs={"class": "form-control"}),
+            "first_name": forms.TextInput(attrs={"class": "form-control"}),
+            "last_name": forms.TextInput(attrs={"class": "form-control"}),
+            "avatar": forms.FileInput(attrs={"class": "form-control"})
+        }

@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect
 from core.models import Ingresos, Egresos
 from core.forms import IngresosForm, EgresosForm, QueryMes_Form, QueryFechas_Form
-from usuarios.utils import obtener_usuario
 from django.contrib import messages
 from datetime import date
 from calendar import monthrange
@@ -9,7 +8,7 @@ from calendar import monthrange
 
 def pagina_inicio(request):
     
-    usuario = obtener_usuario(request)       
+    usuario = request.user
     saldo_actual = 0
     date_actual = date.today()
    
@@ -51,7 +50,7 @@ def pagina_inicio(request):
 
 def ingreso_monto(request):
     
-    usuario = obtener_usuario(request)
+    usuario = request.user
 
     if request.method == "POST":
         formulario = IngresosForm(request.POST)
@@ -70,7 +69,7 @@ def ingreso_monto(request):
 
 def egreso_monto(request):
 
-    usuario = obtener_usuario(request)
+    usuario = request.user
 
     if request.method == "POST":
         formulario = EgresosForm(request.POST)
@@ -132,7 +131,7 @@ def saldo_inicial_query(request, usuario, date_inicio_mes):
 #=================================================
 def query_mes(request):    
     
-    usuario = obtener_usuario(request)
+    usuario = request.user
     date_inicio_mes, date_fin_mes, month_year = fecha_mes(request)
     
     if not date_inicio_mes:
