@@ -72,13 +72,8 @@
 {% block extra_scripts %}
 <script>
   document.getElementById("eliminarAvatar").addEventListener("click", function() {
-    // marcar el hidden como "1"
     document.getElementById("eliminarAvatarFlag").value = "1";
-
-    // mostrar la imagen por defecto
     document.getElementById("avatarPreview").src = "/media/avatars/default.png";
-
-    // limpiar el campo file
     document.getElementById("id_avatar").value = "";
   });
 </script>

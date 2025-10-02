@@ -11,6 +11,11 @@ def user_avatar_path(instance, filename):
 
 class Usuario(AbstractUser):     
     email = models.EmailField(unique=True)
+    username = models.CharField(
+        max_length=20, 
+        unique=True,
+    )
+
     avatar = models.ImageField(
         upload_to=user_avatar_path,
         default="avatars/default.png",
