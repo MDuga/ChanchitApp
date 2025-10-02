@@ -1,5 +1,6 @@
 from django import forms
 from usuarios.models import Usuario
+from django.contrib.auth import authenticate
 
 class RegistroForm(forms.ModelForm):
     confirm_password = forms.CharField(max_length=100, widget=forms.PasswordInput())
@@ -49,14 +50,30 @@ class RegistroForm(forms.ModelForm):
     
 
 #========================================================================
-class LoginForm(forms.Form):
+# class LoginForm(forms.Form):
     
-    email = forms.EmailField(label="email")
+#     email = forms.EmailField(label="email")
              
-    def clean_email(self):
-        email = self.cleaned_data.get("email")
-        if Usuario.objects.filter(email=email).exists():
-            return email
-        raise forms.ValidationError("El usuario no está registrado.")
+#     def clean_email(self):
+#         email = self.cleaned_data.get("email")
+#         if Usuario.objects.filter(email=email).exists():
+#             return email
+#         raise forms.ValidationError("El usuario no está registrado.")
 
 #========================================================================
+
+class LoginForm(forms.Form):
+
+    email = forms.EmailField(label="Correo electrónico")
+    password = forms.CharField(label="Contraseña", widget=forms.PasswordInput)
+    
+    def clean(self):
+        email = self.cleaned_data.get("email")
+        password = self.cleaned_data.get("password")
+        usuario = authenticate(username = email, password = password)
+        if usuario is None:            
+            raise forms.ValidationError("Usuario o contraseña incorrecto.")
+        
+        self.user = usuario
+        return self.cleaned_data
+        
