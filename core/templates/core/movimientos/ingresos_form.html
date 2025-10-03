@@ -9,12 +9,15 @@
         <div class="col-md-6">
         <div class="card shadow">
             <div class="card-body">
-            <h1 class="mb-4 text-center">Formulario para registrar ingresos</h1>
+            <h1 class="mb-4 text-center">Formulario de ingresos</h1>
             
-            <form method="POST">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <button type="submit" class="btn btn-primary w-100">Guardar</button>
+           <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div class="d-flex justify-content-center mt-3">
+                <button type="submit" class="btn btn-primary px-4 me-2">Guardar</button>
+                <a href="{% url 'pagina_inicio' %}" class="btn btn-secondary px-4">Cancelar</a>
+            </div>
             </form>
             </div>
         </div>
