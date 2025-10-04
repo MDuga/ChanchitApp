@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 
 User = get_user_model()
 
-def crear_usuario(request):
+def registrar_usuario(request):
     if request.method == "POST":
         formulario = RegistroForm(request.POST)
         if formulario.is_valid():
