@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'widget_tweaks',
     'core',
     'usuarios',
 ]
@@ -112,6 +113,9 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
+
+DATE_INPUT_FORMATS = ["%d/%m/%Y"]
+
 
 
 # Static files (CSS, JavaScript, Images)

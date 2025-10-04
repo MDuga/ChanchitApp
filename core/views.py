@@ -220,7 +220,7 @@ def query(request):
 class IngresoUpdateView(LoginRequiredMixin, UpdateView):
     model = Ingresos
     template_name = "core/movimientos/ingresos_form.html"
-    fields = ["monto", "descripcion", "date_movimiento"]
+    fields = ["monto", "descripcion", "categoria", "date_movimiento"]
     slug_field = "uuid"
     slug_url_kwarg = "uuid"
     success_url = reverse_lazy("query")
@@ -229,7 +229,7 @@ class IngresoUpdateView(LoginRequiredMixin, UpdateView):
 class EgresoUpdateView(LoginRequiredMixin, UpdateView):
     model = Egresos
     template_name = "core/movimientos/egresos_form.html"
-    fields = ["monto", "descripcion", "date_movimiento"]
+    fields = ["monto", "descripcion", "categoria", "date_movimiento"]
     slug_field = "uuid"
     slug_url_kwarg = "uuid"
     success_url = reverse_lazy("query")

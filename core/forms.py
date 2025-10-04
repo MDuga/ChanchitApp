@@ -9,7 +9,8 @@ class IngresosForm(forms.ModelForm):
         labels = {
             "monto": "Monto a ingresar",
             "moneda": "Moneda",
-            "descripcion": "Descripción (Ej. mesada)",
+            "descripcion": "Descripción",
+            "categoria": "Categoría",
             "date_movimiento": "Fecha de entrada (dd/mm/yyyy)"
         }
     def clean_monto(self):
@@ -28,6 +29,7 @@ class EgresosForm(forms.ModelForm):
             "monto": "Monto de egreso",
             "moneda": "Moneda",
             "descripcion": "Descripción",
+            "categoria": "Categoría",
             "date_movimiento": "Fecha de egreso (dd/mm/yyyy)"
         }
     def clean_monto(self):
