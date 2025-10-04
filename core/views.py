@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -88,7 +88,6 @@ def egreso_monto(request):
         if formulario.is_valid():                     
             egreso = formulario.save(commit=False)
             egreso.usuario = usuario
-            egreso.monto = -egreso.monto
             egreso.save()
             messages.success(request, "Egreso realizado con éxito.")
             return redirect('pagina_inicio')
@@ -220,19 +219,28 @@ def query(request):
 class IngresoUpdateView(LoginRequiredMixin, UpdateView):
     model = Ingresos
     template_name = "core/movimientos/ingresos_form.html"
-    fields = ["monto", "descripcion", "categoria", "date_movimiento"]
+    form_class = IngresosForm
     slug_field = "uuid"
     slug_url_kwarg = "uuid"
     success_url = reverse_lazy("query")
+
+    def get_queryset(self):
+        return Ingresos.objects.filter(usuario=self.request.user)
+
 
 #====================================================================================
 class EgresoUpdateView(LoginRequiredMixin, UpdateView):
     model = Egresos
     template_name = "core/movimientos/egresos_form.html"
-    fields = ["monto", "descripcion", "categoria", "date_movimiento"]
+    form_class = EgresosForm
+    #fields = ["monto", "descripcion", "categoria", "date_movimiento"]
     slug_field = "uuid"
     slug_url_kwarg = "uuid"
     success_url = reverse_lazy("query")
+
+    def get_queryset(self):
+        return Egresos.objects.filter(usuario=self.request.user)
+
 
 #====================================================================================
 class IngresoDeleteView(LoginRequiredMixin, DeleteView):
@@ -242,6 +250,10 @@ class IngresoDeleteView(LoginRequiredMixin, DeleteView):
     slug_url_kwarg = "uuid"
     success_url = reverse_lazy("query")
 
+    def get_queryset(self):
+        return Ingresos.objects.filter(usuario=self.request.user)
+
+
 #====================================================================================
 class EgresoDeleteView(LoginRequiredMixin, DeleteView):
     model = Egresos
@@ -249,3 +261,6 @@ class EgresoDeleteView(LoginRequiredMixin, DeleteView):
     slug_field = "uuid"
     slug_url_kwarg = "uuid"
     success_url = reverse_lazy("query")
+
+    def get_queryset(self):
+        return Egresos.objects.filter(usuario=self.request.user)

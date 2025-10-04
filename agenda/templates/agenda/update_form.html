@@ -1,0 +1,59 @@
+{% extends "core/base.html" %}
+{% block title %} Editar evento {% endblock %}
+
+{% block content %}
+<div class="container mt-5 col-md-6">
+  <div class="card shadow-lg p-4">
+    <h3 class="text-center mb-4">Editar evento</h3>
+
+    <form method="post">
+      {% csrf_token %}
+
+      <!-- Campo Título -->
+      <div class="mb-3">
+        <label class="form-label">{{ form.titulo.label }}</label>
+        {{ form.titulo }}
+        {% if form.titulo.errors %}
+          <div class="text-danger small">{{ form.titulo.errors }}</div>
+        {% endif %}
+      </div>
+
+      <!-- Campo Fecha -->
+      <div class="mb-3">
+        <label class="form-label">{{ form.date_evento.label }}</label>
+        {{ form.date_evento }}
+        {% if form.date_evento.errors %}
+          <div class="text-danger small">{{ form.date_evento.errors }}</div>
+        {% endif %}
+      </div>
+
+      <!-- Campo Tipo -->
+      <div class="mb-3">
+        <label class="form-label">{{ form.tipo_evento.label }}</label>
+        {{ form.tipo_evento }}
+      </div>
+
+      <!-- Campo Monto -->
+      <div class="mb-3">
+        <label class="form-label">{{ form.monto.label }}</label>
+        {{ form.monto }}
+        {% if form.monto.errors %}
+          <div class="text-danger small">{{ form.monto.errors }}</div>
+        {% endif %}
+      </div>
+
+      <!-- Campo Estado -->
+      <div class="mb-3">
+        <label class="form-label">{{ form.estado.label }}</label>
+        {{ form.estado }}
+      </div>
+
+      <!-- Botones -->
+      <div class="text-center mt-3">
+        <button type="submit" class="btn btn-primary">Guardar cambios</button>
+        <a href="{% url 'evento_list' %}" class="btn btn-secondary ms-2">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

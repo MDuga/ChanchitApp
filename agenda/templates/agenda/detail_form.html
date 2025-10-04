@@ -1,0 +1,21 @@
+{% extends "core/base.html" %}
+{% block title %} Detalle del evento {% endblock %}
+
+{% block content %}
+<div class="container mt-5 col-md-6">
+  <div class="card shadow p-4">
+    <h3 class="text-center mb-4">Detalle del evento</h3>
+    <ul class="list-group">
+      <li class="list-group-item"><strong>Título:</strong> {{ evento.titulo }}</li>
+      <li class="list-group-item"><strong>Fecha:</strong> {{ evento.date_evento|date:"d/m/Y" }}</li>
+      <li class="list-group-item"><strong>Tipo:</strong> {{ evento.get_tipo_evento_display }}</li>
+      <li class="list-group-item"><strong>Monto:</strong> {{ evento.monto }} {{ evento.moneda }}</li>
+      <li class="list-group-item"><strong>Estado:</strong> {{ evento.get_estado_display }}</li>
+    </ul>
+    <div class="text-center mt-4">
+      <a href="{% url 'evento_update' evento.pk %}" class="btn btn-primary">Editar</a>
+      <a href="{% url 'evento_list' %}" class="btn btn-secondary ms-2">Volver al listado</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

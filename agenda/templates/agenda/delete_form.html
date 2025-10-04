@@ -1,0 +1,16 @@
+{% extends "core/base.html" %}
+{% block title %} Eliminar evento {% endblock %}
+
+{% block content %}
+<div class="container mt-5 col-md-6">
+  <div class="card shadow-lg p-4 text-center">
+    <h3 class="mb-3 text-danger">¿Deseas eliminar este evento?</h3>
+    <p><strong>{{ object.titulo }}</strong> — {{ object.date_evento|date:"d/m/Y" }}</p>
+    <form method="post">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-danger">Eliminar</button>
+      <a href="{% url 'evento_list' %}" class="btn btn-secondary ms-2">Cancelar</a>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -32,11 +32,17 @@ class EgresosForm(forms.ModelForm):
             "categoria": "Categoría",
             "date_movimiento": "Fecha de egreso (dd/mm/yyyy)"
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.monto:
+            self.initial["monto"] = abs(self.instance.monto)
+
     def clean_monto(self):
         monto = self.cleaned_data.get("monto")
         if monto < 0:
             raise forms.ValidationError("Debes ingresar un número positivo")
-        return monto
+        return -monto
     
 #========================================================================
 class QueryMes_Form(forms.Form):
@@ -46,7 +52,7 @@ class QueryMes_Form(forms.Form):
     
                  
 #========================================================================
-# Para hacer búsqueda por rango de echa
+# Para hacer búsqueda por rango de fecha
 class QueryFechas_Form(forms.Form):
     
     inicio = forms.DateField(

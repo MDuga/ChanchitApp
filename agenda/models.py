@@ -1,6 +1,6 @@
 from django.db import models
 from usuarios.models import Usuario
-from django.utils import timezone
+
 
 class Evento(models.Model):
 
@@ -10,9 +10,19 @@ class Evento(models.Model):
         ("cancelado", "Cancelado"),
     ]
 
+    tipos_evento = [
+        ("cumpleanos", "Cumpleaños"),
+        ("entretenimiento", "Hobbies / Entretenimiento"),
+        ("viaje", "Viaje"),
+        ("regalo", "Regalo"),
+        ("otro", "Otro"),
+    ]
+
+
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
-    descripcion = models.CharField(max_length=100)
+    titulo = models.CharField(max_length=100)
     date_evento = models.DateField()
+    tipo_evento = models.CharField(max_length=20, choices=tipos_evento, default="otro")
     monto = models.IntegerField()
     moneda = models.CharField(max_length=3, default='UYU')
     estado = models.CharField(max_length=20, choices=estados, default="pendiente")
