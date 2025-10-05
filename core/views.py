@@ -24,8 +24,7 @@ def pagina_inicio(request):
     saldo_actual = 0
     date_actual = date.today()
    
-    # movimientos a la fecha
-        
+            
     tipo_movimientos = [
     (Ingresos, 'date_movimiento'),
     (Egresos, 'date_movimiento')

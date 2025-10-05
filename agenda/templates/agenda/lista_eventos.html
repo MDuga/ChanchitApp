@@ -1,165 +1,338 @@
 {% extends "core/base.html" %}
+{% load static %}
+
+
 {% block title %}Listado de eventos{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
+  <div class="row">
+    <!-- Columna principal: filtros + tabla -->
+    <div class="col-md-8">
+      <h2 class="text-center mb-4 fw-bold">Listado de eventos</h2>
 
-  <h2 class="text-center mb-4 fw-bold">Listado de eventos</h2>
+      <!-- FILTROS -->
+      <form method="get" class="row g-2 mb-3">
+        <div class="col-6 col-md-3">
+          <select name="estado" class="form-select">
+            <option value="">Todos los estados</option>
+            <option value="pendiente">Pendiente</option>
+            <option value="cerrado">Cerrado</option>
+            <option value="cancelado">Cancelado</option>
+          </select>
+        </div>
 
-  <!-- FILTROS -->
-  <form method="get" class="row g-2 justify-content-center mb-3">
-    <div class="col-md-2">
-      <select name="estado" class="form-select">
-        <option value="">Todos los estados</option>
-        <option value="pendiente">Pendiente</option>
-        <option value="cerrado">Cerrado</option>
-        <option value="cancelado">Cancelado</option>
-      </select>
+        <div class="col-6 col-md-3">
+          <select name="tipo" class="form-select">
+            <option value="">Todos los tipos</option>
+            <option value="cumpleanos">Cumpleaños</option>
+            <option value="viaje">Viaje</option>
+            <option value="regalo">Regalo</option>
+            <option value="otro">Otro</option>
+          </select>
+        </div>
+
+        <div class="col-6 col-md-3"><input type="date" name="desde" class="form-control"></div>
+        <div class="col-6 col-md-3"><input type="date" name="hasta" class="form-control"></div>
+
+        <div class="col-12 text-center mt-2">
+          <button type="submit" class="btn btn-primary me-2 px-4">Filtrar</button>
+          <a href="{% url 'evento_list' %}" class="btn btn-outline-secondary px-4">Borrar</a>
+          <a href="{% url 'evento_create' %}" class="btn btn-outline-success px-4 ms-3">
+            <i class="bi bi-plus-circle"></i> Nuevo evento
+          </a>
+        </div>
+      </form>
+
+      <!-- TABLA -->
+      <div class="table-responsive mt-4">
+        <table class="table table-striped align-middle">
+          <thead class="table-dark">
+            <tr>
+              <th>Título</th>
+              <th>Fecha</th>
+              <th>Tipo</th>
+              <th>Monto</th>
+              <th>Estado</th>
+              <th class="text-center">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for evento in lista_eventos %}
+            <tr>
+              <td>{{ evento.titulo }}</td>
+              <td>{{ evento.date_evento|date:"d/m/Y" }}</td>
+              <td>{{ evento.get_tipo_evento_display }}</td>
+              <td>{{ evento.monto }} {{ evento.moneda }}</td>
+              <td>{{ evento.estado }}</td>
+              <td class="text-center">
+                <a href="{% url 'evento_detail' evento.id %}" class="btn btn-action btn-sm me-1" title="Ver"><i class="bi bi-eye"></i></a>
+                <a href="{% url 'evento_update' evento.id %}" class="btn btn-action btn-sm me-1" title="Editar"><i class="bi bi-pencil"></i></a>
+                <a href="{% url 'evento_delete' evento.id %}" class="btn btn-action btn-sm" title="Borrar"><i class="bi bi-trash"></i></a>
+              </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6" class="text-center text-muted">No hay eventos disponibles.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     </div>
 
-    <div class="col-md-2">
-      <select name="tipo" class="form-select">
-        <option value="">Todos los tipos</option>
-        <option value="cumpleanos">Cumpleaños</option>
-        <option value="viaje">Viaje</option>
-        <option value="regalo">Regalo</option>
-        <option value="otro">Otro</option>
-      </select>
+    <!-- PANEL DERECHA: Próximos eventos -->
+    <div class="col-md-4">
+      <div class="card shadow-sm card-proximos p-3">
+        <h5 class="text-center text-primary fw-bold mb-2">
+          📅 Próximos eventos
+        </h5>
+        <hr class="my-1">
+
+        <!-- === MES ACTUAL === -->
+        <section class="mes-section mb-3">
+          <h6 class="text-center fw-bold text-primary mb-1">
+            {{ name_month_actual }} {{ year_actual }}
+          </h6>
+
+          {% if eventos_actual %}
+            <div class="resumen p-2 rounded d-flex justify-content-between align-items-center">
+              <div class="totales">
+                💰 <strong>Monto a ahorrar:</strong> {{ evento_monto_actual }} {{ eventos_actual.0.moneda }}<br>
+                🐷 <strong>Saldo actual:</strong> {{ saldo_actual }} {{ eventos_actual.0.moneda }}<br>
+                📉 <strong>Faltante:</strong> {{ faltante_actual }} {{ eventos_actual.0.moneda }}
+              </div>
+              <div class="chanchito">
+                <img src="{% static 'img/chanchito_panel.png' %}" alt="Chanchito" class="chanchito-img">
+              </div>
+            </div>
+
+            <div class="mensaje {{ mensaje_color }} p-2 mt-1 rounded fw-semibold text-center">
+              {{ mensaje }}
+            </div>
+
+            <!-- Calendario -->
+            <div class="calendar-wrapper mt-1">
+              <div class="calendar-header text-center fw-bold text-secondary small">
+                {{ name_month_actual }}
+              </div>
+              <div class="calendar">
+                {% for week in weeks_actual %}
+                  <div class="calendar-row d-flex justify-content-between">
+                    {% for day in week %}
+                      {% if day == 0 %}
+                        <div class="calendar-day empty"></div>
+                      {% else %}
+                        <div class="calendar-day {% if day in eventos_actual_days %}has-event{% endif %}"
+                            {% for e in eventos_actual %}
+                              {% if e.date_evento.day == day %}
+                                title="{{ e.titulo }} - {{ e.monto }} {{ e.moneda }}"
+                              {% endif %}
+                            {% endfor %}>
+                          {{ day }}
+                        </div>
+                      {% endif %}
+                    {% endfor %}
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+
+          {% else %}
+            <p class="text-muted text-center small">No hay eventos para este mes</p>
+          {% endif %}
+        </section>
+
+        <hr class="my-2">
+
+        <!-- === MES SIGUIENTE === -->
+        <section class="mes-section">
+          <h6 class="text-center fw-bold text-success mb-2">
+            {{ name_month_next }} {{ year_next }}
+          </h6>
+
+          {% if eventos_next %}        
+            <div class="resumen p-2 rounded d-flex justify-content-between align-items-center">
+              <div class="totales">
+                💰 <strong>Monto a ahorrar:</strong> {{ evento_monto_next }} {{ eventos_next.0.moneda }}<br>
+              </div>
+            
+          {% else %}
+            <p class="text-muted text-center small">No hay eventos para el mes siguiente</p>
+          {% endif %}
+            </div>    
+
+          <div class="calendar-wrapper mt-1">
+              <div class="calendar-header text-center fw-bold text-secondary small">
+                {{ name_month_next }}
+              </div>
+              <div class="calendar">
+                {% for week in weeks_next %}
+                  <div class="calendar-row d-flex justify-content-between">
+                    {% for day in week %}
+                      {% if day == 0 %}
+                        <div class="calendar-day empty"></div>
+                      {% else %}
+                        <div class="calendar-day">{{ day }}</div>
+                      {% endif %}
+                    {% endfor %}
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+        </section>
+      </div>
     </div>
 
-    <div class="col-md-2">
-      <input type="date" name="desde" class="form-control" placeholder="Desde">
-    </div>
-
-    <div class="col-md-2">
-      <input type="date" name="hasta" class="form-control" placeholder="Hasta">
-    </div>
-
-    <div class="col-md-2 d-flex justify-content-center">
-      <button type="submit" class="btn btn-success me-2 px-4">Filtrar</button>
-      <a href="{% url 'evento_list' %}" class="btn btn-outline-secondary px-4">Borrar</a>
-    </div>
-  </form>
-
-  <!-- NUEVO EVENTO -->
-  <div class="text-end mb-3">
-    <a href="{% url 'evento_create' %}" class="btn btn-outline-success">
-      <i class="bi bi-plus-circle"></i> Nuevo evento
-    </a>
-  </div>
-
-  <!-- TABLA -->
-  <div class="table-responsive">
-    <table class="table table-striped align-middle">
-      <thead class="table-dark">
-        <tr>
-          <th>Título</th>
-          <th>Fecha</th>
-          <th>Tipo</th>
-          <th>Monto</th>
-          <th>Estado</th>
-          <th class="text-center">Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for evento in lista_eventos %}
-          <tr>
-            <td>{{ evento.titulo }}</td>
-            <td>{{ evento.date_evento|date:"d/m/Y" }}</td>
-            <td>{{ evento.get_tipo_evento_display }}</td>
-            <td>{{ evento.monto }} {{ evento.moneda }}</td>
-            <td>{{ evento.estado }}</td>
-            <td class="text-center">
-              <a href="{% url 'evento_detail' evento.id %}" class="btn btn-action btn-sm me-1" title="Ver">
-                <i class="bi bi-eye"></i>
-              </a>
-              <a href="{% url 'evento_update' evento.id %}" class="btn btn-action btn-sm me-1" title="Editar">
-                <i class="bi bi-pencil"></i>
-              </a>
-              <a href="{% url 'evento_delete' evento.id %}" class="btn btn-action btn-sm" title="Borrar">
-                <i class="bi bi-trash"></i>
-              </a>
-            </td>
-          </tr>
-        {% empty %}
-          <tr><td colspan="6" class="text-center text-muted">No hay eventos disponibles.</td></tr>
-        {% endfor %}
-      </tbody>
-    </table>
   </div>
 </div>
 
 {% endblock %}
 
 {% block extra_scripts %}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-
-
 <style>
-  /* === Botones de acción coherentes con el encabezado azul === */
-  .btn-action {
-    border: none;
-    background-color: #e8f0ff; /* celeste muy claro */
-    color: #0d6efd;            /* azul Bootstrap */
-    transition: all 0.25s ease;
-    border-radius: 8px;
-    padding: 6px 10px;
+    /* --- Reduce tamaño de filtros --- */
+    form.row.g-2.mb-3 select,
+    form.row.g-2.mb-3 input[type="date"],
+    form.row.g-2.mb-3 button,
+    form.row.g-2.mb-3 a.btn {
+      font-size: 0.85rem;
+      padding: 4px 8px;
+      height: 30px;
+    }
+
+    /* Botones más compactos */
+    form.row.g-2.mb-3 .btn {
+      border-radius: 6px;
+    }
+
+    /* Centra el título solo dentro de la columna izquierda */
+    .col-md-8 > h2 {
+      text-align: center;
+      width: 100%;
+      display: block;
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-top: -10px;
+      margin-bottom: 12px;
+      position: relative;
+      left: 00; /* asegúrate de que no haya desplazamiento */
+    }
+
+    /* Tamaño de texto general más pequeño */
+    .table,
+    .table th,
+    .table td {
+      font-size: 0.85rem;        /* letras más chicas */
+      padding: 6px 8px;          /* filas más compactas */
+    }
+
+    /* Encabezado un poco más fino */
+    thead.table-dark th {
+      font-size: 0.85rem;
+      padding: 8px 8px;
+    }
+
+    /* Inputs y selects de filtros más pequeños */
+    form.row.g-2.mb-3 select,
+    form.row.g-2.mb-3 input[type="date"],
+    form.row.g-2.mb-3 button,
+    form.row.g-2.mb-3 a.btn {
+      font-size: 0.85rem;
+      padding: 4px 8px;
+      height: 34px;
+    }
+
+    /* --- Subir el panel derecho --- */
+    .card-proximos {
+      margin-top: -10px; /* ajustá el valor a gusto: -30 o -50 según altura */
+      max-height: 86vh;
+    }
+
+    /* --- Ajuste general de columnas --- */
+    .row > .col-md-9 {
+      padding-right: 1rem;
+    }
+
+    .row > .col-md-3 {
+      padding-left: 0.5rem;
+    }
+
+    /* --- Mejor balance visual entre ambas columnas --- */
+  .col-md-8 {
+    position: relative;
+  }
+  .col-md-8 > h2 {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
   }
 
-  .btn-action:hover {
-    background-color: #0d6efd;
-    color: white;
-    transform: scale(1.05);
+  .card-proximos {
+    max-height: 88vh;
+    overflow-y: auto;
+    border-radius: 12px;
+    background: #fff;
+    font-size: 0.88rem;
+  }
+  .mes-section { margin-bottom: 1rem; }
+
+  .resumen {
+    background: #f6f9ff;
+  }
+  .chanchito-img {
+    width: 80px;
+    height: auto;
   }
 
-  /* Ajuste visual de la tabla */
-  tbody tr:hover {
-    background-color: #f3f7ff;
+  .mensaje {
+    background-color: #f3f8ff;
+    border-left: 4px solid #0d6efd;
+    font-size: 0.85rem;
   }
-</style>
-
-  /* === Botón “Nuevo evento” === */
-  .btn-outline-success {
-    border: 1px solid #cfd3d9;
-    color: #333;
-    border-radius: 10px;
-    padding: 8px 18px;
-    transition: all 0.25s ease;
+  .text-danger.mensaje {
+    background-color: #ffe6e6;
+    border-color: #dc3545;
+  }
+  .text-success.mensaje {
+    background-color: #e8f9ee;
+    border-color: #28a745;
   }
 
-  .btn-outline-success:hover {
+  .calendar-wrapper {
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 4px 6px;
+    background: #fdfdfd;
+  }
+  .calendar-header {
+    background: #f7f9ff;
+    border-radius: 4px;
+    margin-bottom: 3px;
+    padding: 1px 0;
+  }
+  .calendar { display: flex; flex-direction: column; gap: 2px; }
+  .calendar-row { display: flex; justify-content: space-between; }
+  .calendar-day {
+    width: 23px; height: 23px;
+    text-align: center; line-height: 23px;
+    border-radius: 50%;
+    font-size: 0.7rem;
+    background-color: #f3f4f9;
+    color: #555;
+  }
+  .calendar-day.has-event {
     background-color: #0d6efd;
     color: #fff;
-    border-color: #0d6efd;
+    font-weight: bold;
+    box-shadow: 0 0 4px rgba(13,110,253,0.5);
+  }
+  .calendar-day.empty { background: transparent; }
+
+  .card-proximos hr {
+  margin-top: 0px !important;     /* elimina espacio superior */
+  margin-bottom: 2px !important;  /* deja un poquito antes del título siguiente */
   }
 
-  /* === Botones Filtrar / Borrar filtros === */
-  .btn-success {
-    background-color: #0d6efd;
-    border: none;
-    padding: 8px 18px;
-    border-radius: 8px;
-  }
-
-  .btn-outline-secondary {
-    border-radius: 8px;
-    padding: 8px 18px;
-  }
-
-  /* === Tabla === */
-  .table {
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-  }
-
-  thead.table-dark th {
-    background-color: #0d6efd !important;
-    border: none;
-  }
-
-  tbody tr:hover {
-    background-color: #f8f9fa;
-  }
 </style>
 {% endblock %}
+
