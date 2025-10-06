@@ -61,7 +61,7 @@
           <h6 class="fw-bold mb-1 text-primary">💼 Saldo al inicio:</h6>
           <p class="mb-3"><strong>{{ saldo_inicial }} UYU</strong></p>
 
-          {% if movimientos %}
+         {% if movimientos %}
           <table class="table table-sm table-striped table-bordered align-middle text-center mb-3">
             <thead class="table-dark small">
               <tr>
@@ -70,6 +70,7 @@
                 <th>Descripción</th>
                 <th>Categoría</th>
                 <th>Monto</th>
+                <th>Acciones</th>  <!-- 👈 Nueva columna -->
               </tr>
             </thead>
             <tbody class="small">
@@ -82,13 +83,25 @@
                 <td class="{% if mov.monto >= 0 %}text-success{% else %}text-danger{% endif %}">
                   {{ mov.monto }}
                 </td>
+                <td>
+                  {% if mov.tipo_modelo == "Ingresos" or mov.tipo_modelo == "Ingreso" %}
+                    <a href="{% url 'update_ingreso' mov.uuid %}" class="btn btn-sm btn-outline-warning me-1" title="Editar ingreso">✏️</a>
+                    <a href="{% url 'delete_ingreso' mov.uuid %}" class="btn btn-sm btn-outline-danger" title="Eliminar ingreso">🗑️</a>
+                  {% elif mov.tipo_modelo == "Egresos" or mov.tipo_modelo == "Egreso" %}
+                    <a href="{% url 'update_egreso' mov.uuid %}" class="btn btn-sm btn-outline-warning me-1" title="Editar egreso">✏️</a>
+                    <a href="{% url 'delete_egreso' mov.uuid %}" class="btn btn-sm btn-outline-danger" title="Eliminar egreso">🗑️</a>
+                  {% else %}
+                    <span class="text-muted small">—</span>
+                  {% endif %}
+                </td>
               </tr>
               {% endfor %}
             </tbody>
           </table>
-          {% else %}
+        {% else %}
           <p class="text-muted text-center small">No hay movimientos para este período.</p>
-          {% endif %}
+        {% endif %}
+
 
           <h6 class="fw-bold mb-1 text-primary">📊 Saldo final:</h6>
           <h4 class="text-center {% if saldo_final >= 0 %}text-success{% else %}text-danger{% endif %} mb-0">
@@ -195,62 +208,70 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
 
-  // Distribución de Gastos (horizontal bar en %)
+  // 🥧 Distribución de Gastos (agrupada por categoría, en %)
   (() => {
-  const egresosMontos = {{ egresos_monto_categoria|safe }};
-  const egresosCategorias = {{ egresos_categorias|safe }};
-  const egresosAbs = egresosMontos.map(v => Math.abs(v));
-  const total = egresosAbs.reduce((a, b) => a + b, 0);
+    const categorias = {{ egresos_categorias|safe }};
+    const montos = {{ egresos_monto_categoria|safe }};
 
-  if (total > 0) {
-    const porcentajes = egresosAbs.map(v => ((v / total) * 100).toFixed(1));
+    // Convertir a positivos y agrupar por categoría
+    const agrupados = {};
+    categorias.forEach((cat, i) => {
+      const valor = Math.abs(montos[i]);
+      agrupados[cat] = (agrupados[cat] || 0) + valor;
+    });
 
-    new Chart(document.getElementById('egresosChart'), {
-      type: 'bar',
-      data: {
-        labels: egresosCategorias,
-        datasets: [{
-          data: porcentajes,
-          backgroundColor: '#36a2eb'
-        }]
-      },
-      options: {
-        indexAxis: 'y',
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            callbacks: {
-              label: ctx => ctx.parsed.x + '%'
+    // Obtener arrays finales
+    const categoriasUnicas = Object.keys(agrupados);
+    const montosAgrupados = Object.values(agrupados);
+
+    const total = montosAgrupados.reduce((a, b) => a + b, 0);
+    const porcentajes = montosAgrupados.map(v => ((v / total) * 100).toFixed(1));
+
+    if (total > 0) {
+      new Chart(document.getElementById('egresosChart'), {
+        type: 'bar',
+        data: {
+          labels: categoriasUnicas,
+          datasets: [{
+            data: porcentajes,
+            backgroundColor: '#36a2eb'
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: ctx => ctx.parsed.x + '%'
+              }
+            },
+            datalabels: {
+              color: '#fff',
+              formatter: v => v + '%',
+              font: { weight: 'bold', size: 12 }
             }
           },
-          datalabels: {
-            color: '#fff',
-            formatter: v => v + '%',
-            font: { weight: 'bold', size: 12 }
+          scales: {
+            x: {
+              beginAtZero: true,
+              title: { display: true, text: '% del total de egresos' }
+            }
           }
         },
-        scales: {
-          x: {
-            beginAtZero: true,
-            title: { display: true, text: '% del total de egresos' }
-          }
-        }
-      },
-      plugins: [ChartDataLabels]
-    });
-  } else {
-  // 👇 Mostrar texto dentro del card si no hay datos, pero mantener el título
-  const ctx = document.getElementById('egresosChart');
-  if (ctx) {
-    const cardBody = ctx.parentElement; // el div interior del card
-    cardBody.innerHTML = `
-      <h6 class="text-center fw-bold text-primary mb-2">Distribución de Gastos</h6>
-      <div class="d-flex justify-content-center align-items-center" style="height:180px;">
-        <p class="text-muted fw-bold mb-0">Sin datos de egresos para mostrar</p>
-      </div>`;
-  }
-}
-})();
+        plugins: [ChartDataLabels]
+      });
+    } else {
+      const ctx = document.getElementById('egresosChart');
+      const cardBody = ctx.parentElement;
+      cardBody.innerHTML = `
+        <h6 class="text-center fw-bold text-primary mb-2">Distribución de Gastos</h6>
+        <div class="d-flex justify-content-center align-items-center" style="height:180px;">
+          <p class="text-muted fw-bold mb-0">Sin datos de egresos para mostrar</p>
+        </div>`;
+    }
+  })();
+
 
 }); 
 </script>
