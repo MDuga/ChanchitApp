@@ -197,56 +197,62 @@ document.addEventListener("DOMContentLoaded", function() {
 
   // Distribución de Gastos (horizontal bar en %)
   (() => {
-    const egresosMontos = {{ egresos_monto_categoria|safe }};
-    const egresosCategorias = {{ egresos_categorias|safe }};
-    const egresosAbs = egresosMontos.map(v => Math.abs(v));
-    const total = egresosAbs.reduce((a, b) => a + b, 0);
-    console.log("Total egresos:", total, "Valores absolutos:", egresosAbs);
+  const egresosMontos = {{ egresos_monto_categoria|safe }};
+  const egresosCategorias = {{ egresos_categorias|safe }};
+  const egresosAbs = egresosMontos.map(v => Math.abs(v));
+  const total = egresosAbs.reduce((a, b) => a + b, 0);
+
+  if (total > 0) {
     const porcentajes = egresosAbs.map(v => ((v / total) * 100).toFixed(1));
 
-
-    if (total > 0) {
-      const porcentajes = egresosAbs.map(v => ((v / total) * 100).toFixed(1));
-
-      new Chart(document.getElementById('egresosChart'), {
-        type: 'bar',
-        data: {
-          labels: egresosCategorias,
-          datasets: [{
-            data: porcentajes,
-            backgroundColor: '#36a2eb'
-          }]
-        },
-        options: {
-          indexAxis: 'y',
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              callbacks: {
-                label: ctx => ctx.parsed.x + '%'
-              }
-            },
-            datalabels: {
-              color: '#fff',
-              formatter: v => v + '%',
-              font: { weight: 'bold', size: 12 }
+    new Chart(document.getElementById('egresosChart'), {
+      type: 'bar',
+      data: {
+        labels: egresosCategorias,
+        datasets: [{
+          data: porcentajes,
+          backgroundColor: '#36a2eb'
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: ctx => ctx.parsed.x + '%'
             }
           },
-          scales: {
-            x: {
-              beginAtZero: true,
-              title: { display: true, text: '% del total de egresos' }
-            }
+          datalabels: {
+            color: '#fff',
+            formatter: v => v + '%',
+            font: { weight: 'bold', size: 12 }
           }
         },
-        plugins: [ChartDataLabels]
-      });
-    } else {
-      console.warn("No hay egresos para graficar");
-    }
-  })();
+        scales: {
+          x: {
+            beginAtZero: true,
+            title: { display: true, text: '% del total de egresos' }
+          }
+        }
+      },
+      plugins: [ChartDataLabels]
+    });
+  } else {
+  // 👇 Mostrar texto dentro del card si no hay datos, pero mantener el título
+  const ctx = document.getElementById('egresosChart');
+  if (ctx) {
+    const cardBody = ctx.parentElement; // el div interior del card
+    cardBody.innerHTML = `
+      <h6 class="text-center fw-bold text-primary mb-2">Distribución de Gastos</h6>
+      <div class="d-flex justify-content-center align-items-center" style="height:180px;">
+        <p class="text-muted fw-bold mb-0">Sin datos de egresos para mostrar</p>
+      </div>`;
+  }
+}
+})();
 
-}); // 👈 este es el cierre del addEventListener
+}); 
 </script>
 {% endblock %}
 
