@@ -8,45 +8,127 @@
 {% block content %}
 <div class="container d-flex justify-content-center align-items-center" style="min-height: 60vh;">
   <div class="row text-center">
-    
+
+    <!-- === CARDS SUPERIORES (4) === -->
     {% for card in cards %}
-          <div class="col-12 col-md-4 mb-4">
-            <div class="card h-100 shadow-lg border-0">
-              <div class="card-body d-flex flex-column justify-content-center">
-                <img src="{% static 'img/'|add:card.img %}" alt="{{ card.alt }}" class="img-fluid mb-1 mx-auto d-block" style="max-height: 140px; max-width: 140px; object-fit: contain;">
-                <h4 class="card-title mb-1">{{ card.title }}</h4>
-                <p class="card-text text-muted">{{ card.text }}</p>
-                <a href="{% url card.url %}" class="btn btn-outline-primary mt-2">Ver</a>
-              </div>
-            </div>
-          </div>
-    {% endfor %}
-  
-
-
-    <!-- SALDO ACTUAL -->
-    <div class="row justify-content-center mt-2">
-      <div class="col-12 col-md-6">
-        <div class="card shadow border-0">
-          <div class="card-body text-center">
-            {% if saldo_actual > 0 %}
-              <img src="{% static 'img/Saldo_positivo.png' %}" alt="Saldo positivo" class="img-fluid mb-0 mx-auto d-block" style="max-height: 140px;; max-width: 140px; object-fit: contain;">
-            {% elif saldo_actual < 0 %}
-              <img src="{% static 'img/Saldo_negativo.png' %}" alt="Saldo negativo" class="img-fluid mb-0 mx-auto d-block" style="max-height: 140px;; max-width: 140px; object-fit: contain;">
-            {% else %}
-              <img src="{% static 'img/Saldo_cero.png' %}" alt="Saldo cero" class="img-fluid mb-0 mx-auto d-block" style="max-height: 140px;; max-width: 140px; object-fit: contain;">
-            {% endif %}
-            <h4 class="card-title mb-1">📊 Saldo actual</h4>
-            <h2 class="{% if saldo_actual >= 0 %}text-success{% else %}text-danger{% endif %}">
-              {{ saldo_actual }} UYU
-            </h2>
-            <p class="text-muted">Actualizado al día de hoy</p>
+      <div class="col-6 col-md-3 mb-4">
+        <div class="card h-100 shadow-sm border-0">
+          <div class="card-body d-flex flex-column justify-content-center">
+            <img src="{% static 'img/'|add:card.img %}" alt="{{ card.alt }}"
+                 class="img-fluid mb-2 mx-auto d-block"
+                 style="max-height: 100px; object-fit: contain;">
+            <h5 class="card-title mb-1">{{ card.title }}</h5>
+            <p class="card-text text-muted small">{{ card.text }}</p>
+            <a href="{% url card.url %}" class="btn btn-outline-primary btn-sm mt-2">Ver</a>
           </div>
         </div>
       </div>
-    </div>
+    {% endfor %}
+
+    <!-- === FILA INFERIOR (2 CARDS) === -->
+    <div class="row justify-content-center mt-4">
+
+      <!-- CARD: SALDO ACTUAL -->
+      <div class="col-12 col-md-5 mb-4">
+        <div class="card shadow border-0 h-100 text-center">
+          <div class="card-body">
+            {% if saldo_actual > 0 %}
+              <img src="{% static 'img/Saldo_positivo.png' %}" alt="Saldo positivo"
+                   class="img-fluid mb-2" style="max-height: 100px;">
+            {% elif saldo_actual < 0 %}
+              <img src="{% static 'img/Saldo_negativo.png' %}" alt="Saldo negativo"
+                   class="img-fluid mb-2" style="max-height: 100px;">
+            {% else %}
+              <img src="{% static 'img/Saldo_cero.png' %}" alt="Saldo cero"
+                   class="img-fluid mb-2" style="max-height: 100px;">
+            {% endif %}
+
+            <h5 class="card-title fw-bold mb-1">📊 Saldo actual</h5>
+            <h3 class="{% if saldo_actual >= 0 %}text-success{% else %}text-danger{% endif %}">
+              {{ saldo_actual }} UYU
+            </h3>
+            <p class="text-muted small mb-0">Actualizado al día de hoy</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARD: PRÓXIMOS EVENTOS -->
+      <div class="col-12 col-md-5 mb-4">
+        <div class="card shadow border-0 h-100">
+          <div class="card-body d-flex flex-column justify-content-between" style="padding-bottom: 2rem; position: relative;">
+
+            <!-- Título -->
+            <h5 class="card-title text-center fw-bold mb-3">
+              🗓️ Próximos eventos – {{ name_month_actual }} {{ year_actual }}
+            </h5>
+
+            <!-- Contenido principal -->
+          <div class="row align-items-start mt-3 flex-grow-1">
+            <!-- Columna izquierda: listado -->
+            <div class="col-8 text-start">
+              {% if eventos_actual %}
+                <ul class="list-unstyled mb-0" style="margin-top: 0.5rem;">
+                  {% for evento in eventos_actual %}
+                    <li class="mb-2 border-bottom pb-1">
+                      <strong>{{ evento.date_evento|date:"d" }}</strong> – 
+                      <strong>{{ evento.titulo }}</strong>:
+                      <span class="fw-bold text-primary">{{ evento.monto }} {{ evento.moneda }}</span>
+                    </li>
+                  {% endfor %}
+                </ul>
+              {% else %}
+                <div class="text-center">
+                  <img src="{% static 'img/Descanso.png' %}" alt="Chanchito descansando"
+                      class="img-fluid" style="max-height: 140px; margin-top: -20px;">
+                  <p class="text-muted fw-bold mb-2" style="margin-top: 5px;">
+                    No hay eventos para este mes
+                  </p>                  
+                </div>
+              {% endif %}
+            </div>
+
+
+             <!-- Columna derecha: chanchito -->
+            {% if eventos_actual %}
+              <div class="col-4 text-center">
+                {% if faltante_actual > 0 %}
+                  <img src="{% static 'img/Ahorro.png' %}" alt="Chanchito ahorrando"
+                      class="img-fluid" style="max-height: 150px; margin-top: -20px;">
+                {% else %}
+                  <img src="{% static 'img/Meta.png' %}" alt="Chanchito feliz"
+                      class="img-fluid" style="max-height: 150px; margin-top: -20px;">
+                {% endif %}
+              </div>
+            {% endif %}
+
+            {% if eventos_actual %}
+              <!-- Frase motivacional fija abajo -->
+              <div class="text-center fw-semibold"
+                  style="
+                    position: absolute;
+                    bottom: 1rem;          
+                    left: 0;
+                    right: 0;
+                    font-size: 1.1rem;     
+                    padding-top: 0.6rem;   
+                    border-top: 1px solid #dee2e6; 
+                  ">
+                <span class="{% if faltante_actual > 0 %}text-danger{% else %}text-success{% endif %}">
+                  {{ mensaje }}
+                </span>
+              </div>
+            {% endif %}
+
+
+
+
+          </div>
+        </div>
+      </div>
+
+
+    </div> <!-- /FILA INFERIOR -->
 
   </div>
 </div>
-
 {% endblock %}

@@ -98,10 +98,17 @@
               <div class="totales">
                 💰 <strong>Monto a ahorrar:</strong> {{ evento_monto_actual }} {{ eventos_actual.0.moneda }}<br>
                 🐷 <strong>Saldo actual:</strong> {{ saldo_actual }} {{ eventos_actual.0.moneda }}<br>
-                📉 <strong>Faltante:</strong> {{ faltante_actual }} {{ eventos_actual.0.moneda }}
+                  {% if faltante_actual > 0 %}
+                    📉 <strong>Faltante:</strong> {{ faltante_actual }} {{ eventos_actual.0.moneda }}
+                  {% endif %}
+
               </div>
-              <div class="chanchito">
-                <img src="{% static 'img/chanchito_panel.png' %}" alt="Chanchito" class="chanchito-img">
+              <div class="chanchito text-center">
+                {% if faltante_actual > 0 %}
+                  <img src="{% static 'img/Ahorro.png' %}" alt="Chanchito ahorrando" class="chanchito-img">
+                {% else %}
+                  <img src="{% static 'img/Meta.png' %}" alt="Chanchito meta alcanzada" class="chanchito-img">
+                {% endif %}
               </div>
             </div>
 
@@ -137,7 +144,11 @@
             </div>
 
           {% else %}
-            <p class="text-muted text-center small">No hay eventos para este mes</p>
+            <div class="text-center mt-2">
+              <p class="text-muted small mb-2">No hay eventos para este mes</p>
+              <img src="{% static 'img/Descanso.png' %}" alt="Chanchito descansando"
+                  class="img-fluid" style="max-height: 160px; margin-top: -5px;">
+            </div>
           {% endif %}
         </section>
 

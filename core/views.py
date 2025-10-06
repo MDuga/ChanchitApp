@@ -6,6 +6,7 @@ from django.views.generic import UpdateView, DeleteView
 from django.urls import reverse_lazy
 from core.models import Ingresos, Egresos
 from core.forms import IngresosForm, EgresosForm, QueryMes_Form, QueryFechas_Form
+from agenda.views import resumen_mensual
 from datetime import date
 from calendar import monthrange
 
@@ -23,6 +24,7 @@ def pagina_inicio(request):
     usuario = request.user
     saldo_actual = 0
     date_actual = date.today()
+    resumen = resumen_mensual(request)
    
             
     tipo_movimientos = [
@@ -47,11 +49,13 @@ def pagina_inicio(request):
         {"img": "Ingresos.png", "alt": "Ingresos", "title": "Ingresos", "text": "Registra entradas de dinero", "url": "ingreso_monto"},
         {"img": "Egresos.png", "alt": "Egresos", "title": "Egresos", "text": "Registra salidas de dinero", "url": "egreso_monto"},
         {"img": "Consultas.png", "alt": "Consultas", "title": "Consultas", "text": "Realiza consulta de movimientos", "url": "query"},
-    ]
+        {"img": "Eventos.png", "alt": "Eventos", "title": "Eventos", "text": "Registra próximos eventos", "url": "evento_list"},
+        ]
 
     contexto = {
         "usuario": usuario,                
         "saldo_actual": saldo_actual,
+        **resumen,
         "cards": cards
     }
    

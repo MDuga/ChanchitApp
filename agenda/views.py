@@ -33,7 +33,7 @@ class EventoCreateView(LoginRequiredMixin, CreateView):
     model = Evento
     form_class = EventoForm
     template_name = "agenda/create_form.html"
-    success_url = reverse_lazy("pagina_inicio")
+    success_url = reverse_lazy("evento_list")
 
     def get_form(self, *args, **kwargs):
         form = super().get_form(*args, **kwargs)
