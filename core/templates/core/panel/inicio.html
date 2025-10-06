@@ -69,11 +69,15 @@
               {% if eventos_actual %}
                 <ul class="list-unstyled mb-0" style="margin-top: 0.5rem;">
                   {% for evento in eventos_actual %}
-                    <li class="mb-2 border-bottom pb-1">
+                    <li>
                       <strong>{{ evento.date_evento|date:"d" }}</strong> – 
                       <strong>{{ evento.titulo }}</strong>:
                       <span class="fw-bold text-primary">{{ evento.monto }} {{ evento.moneda }}</span>
+                      {% if evento.estado == "cerrado" %}
+                        <span class="text-success ms-1">✅</span>
+                      {% endif %}
                     </li>
+
                   {% endfor %}
                 </ul>
               {% else %}

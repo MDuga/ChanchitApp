@@ -145,12 +145,13 @@ def resumen_mensual(request):
             'date_evento__gte': date_actual,
             'date_evento__lte': last_date_actual
         }
-        eventos_actual_list = Evento.objects.filter(**filtro_actual)
+        eventos_actual_list = Evento.objects.filter(**filtro_actual).exclude(estado="cancelado")
                            
-        for i in eventos_actual_list:                
-            evento_monto_actual += i.monto
+        for i in eventos_actual_list:                            
             eventos_actual.append(i)
             eventos_actual_day.append(i.date_evento.day)
+            if i.estado == "pendiente":
+                evento_monto_actual += i.monto
         
         faltante_actual = evento_monto_actual - saldo
         eventos_actual.sort(key=lambda x: x.date_evento)
@@ -178,13 +179,14 @@ def resumen_mensual(request):
             'date_evento__gt': last_date_actual,
             'date_evento__lte': last_date_next
         }
-        eventos_next_list = Evento.objects.filter(**filtro_next)
+        eventos_next_list = Evento.objects.filter(**filtro_next).exclude(estado="cancelado")
 
         
-        for i in eventos_next_list:                
-            evento_monto_next += i.monto
+        for i in eventos_next_list:                            
             eventos_next.append(i)
             eventos_next_day.append(i.date_evento.day)
+            if i.estado == "pendiente":
+                evento_monto_next += i.monto
         
         eventos_next.sort(key=lambda x: x.date_evento)
     
