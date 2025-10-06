@@ -9,6 +9,7 @@ from core.forms import IngresosForm, EgresosForm, QueryMes_Form, QueryFechas_For
 from agenda.views import resumen_mensual
 from datetime import date
 from calendar import monthrange
+import json
 
 
 #====================================================================================
@@ -210,19 +211,31 @@ def query(request):
                 movimientos.append(i)
 
                 if tipo == "Ingresos":
-                    ingresos_monto += i.monto
+                    ingresos_monto += i.monto             
                     ingresos.append(i)
                 else:
                     egresos_monto += i.monto
                     egresos.append(i)
-            
-            for e in ingresos:
-                ingresos_categorias.append(e.categoria)
-                ingresos_monto_categoria.append(e.monto)
 
-            for e in egresos:
-                egresos_categorias.append(e.categoria)
-                egresos_monto_categoria.append(e.monto)
+        ingresos_total = abs(ingresos_monto)
+        egresos_total = abs(egresos_monto)
+
+        if ingresos_total >0:
+            ahorro_porcentaje = (ingresos_total - egresos_total)*100 / ingresos_total
+            ahorro_porcentaje = round(ahorro_porcentaje, 1)
+            gasto = 100 - ahorro_porcentaje
+            gasto = round(gasto, 1)
+
+        else:
+            ahorro_porcentaje = 0
+            
+        for e in ingresos:
+            ingresos_categorias.append(e.categoria)
+            ingresos_monto_categoria.append(e.monto)
+
+        for e in egresos:
+            egresos_categorias.append(e.categoria)
+            egresos_monto_categoria.append(e.monto)
                         
             
         saldo_final = saldo_inicial + movimientos_monto
@@ -238,12 +251,14 @@ def query(request):
         "movimientos": movimientos,
         "ingresos": ingresos,
         "egresos": egresos,
-        "ingresos_categorias": ingresos_categorias,
-        "ingresos_monto_categoria": ingresos_monto_categoria,
-        "ingresos_total": ingresos_monto,
-        "egresos_total": egresos_monto,
-        "egresos_categorias": egresos_categorias,
-        "egresos_monto_categoria": egresos_monto_categoria,
+        "ingresos_categorias": json.dumps(ingresos_categorias),
+        "ingresos_monto_categoria": json.dumps(ingresos_monto_categoria),
+        "ingresos_total": ingresos_total,
+        "egresos_total": egresos_total,
+        "ahorro_porcentaje": ahorro_porcentaje,
+        "gasto": gasto,
+        "egresos_categorias": json.dumps(egresos_categorias),
+        "egresos_monto_categoria": json.dumps(egresos_monto_categoria),
         "saldo_final": saldo_final
     }
     return render(request, "core/movimientos/query.html", contexto)

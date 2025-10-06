@@ -5,63 +5,63 @@
 
 {% block content %}
 <div class="container mt-4">
-
-  <!-- Filtros -->
   <div class="row">
-    <!-- Card Mes -->
-    <div class="col-md-6 mb-3">
-      <div class="card shadow-sm border-0 h-100">
-        <div class="card-body py-3 px-3">
-          <h6 class="card-title text-center mb-3 fw-bold text-primary">📅 Consulta por mes</h6>
-          <form method="get" class="row g-2">  
-            <div class="col-6">
-              <label for="id_month" class="form-label small fw-semibold">Mes</label>
-              {{ form_mes.month|add_class:"form-control form-control-sm" }}
+    <!-- === COLUMNA IZQUIERDA === -->
+    <div class="col-md-8">
+      
+      <!-- Filtros -->
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <div class="card shadow-sm border-0">
+            <div class="card-body py-3 px-3">
+              <h6 class="card-title text-center fw-bold text-primary">📅 Consulta por mes</h6>
+              <form method="get" class="row g-2">
+                <div class="col-6">
+                  <label class="form-label small fw-semibold">Mes</label>
+                  {{ form_mes.month|add_class:"form-control form-control-sm" }}
+                </div>
+                <div class="col-6">
+                  <label class="form-label small fw-semibold">Año</label>
+                  {{ form_mes.year|add_class:"form-control form-control-sm" }}
+                </div>
+                <div class="col-12 mt-2">
+                  <button type="submit" class="btn btn-primary btn-sm w-100">Consultar</button>
+                </div>
+              </form>
             </div>
-            <div class="col-6">
-              <label for="id_year" class="form-label small fw-semibold">Año</label>
-              {{ form_mes.year|add_class:"form-control form-control-sm" }}
+          </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <div class="card shadow-sm border-0">
+            <div class="card-body py-3 px-3">
+              <h6 class="card-title text-center fw-bold text-primary">📆 Consulta por fecha</h6>
+              <form method="get" class="row g-2">
+                <div class="col-6">
+                  <label class="form-label small fw-semibold">Inicio</label>
+                  {{ form_fechas.inicio|add_class:"form-control form-control-sm" }}
+                </div>
+                <div class="col-6">
+                  <label class="form-label small fw-semibold">Fin</label>
+                  {{ form_fechas.fin|add_class:"form-control form-control-sm" }}
+                </div>
+                <div class="col-12 mt-2">
+                  <button type="submit" class="btn btn-primary btn-sm w-100">Consultar</button>
+                </div>
+              </form>
             </div>
-            <div class="col-12 mt-2">
-              <button type="submit" class="btn btn-primary btn-sm w-100">Consultar</button>
-            </div>
-          </form>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- Card Rango Fechas -->
-    <div class="col-md-6 mb-3">
-      <div class="card shadow-sm border-0 h-100">
-        <div class="card-body py-3 px-3">
-          <h6 class="card-title text-center mb-3 fw-bold text-primary">📆 Consulta por fecha</h6>
-          <form method="get" class="row g-2">
-            <div class="col-6">
-              <label for="id_inicio" class="form-label small fw-semibold">Inicio</label>
-              {{ form_fechas.inicio|add_class:"form-control form-control-sm" }}
-            </div>
-            <div class="col-6">
-              <label for="id_fin" class="form-label small fw-semibold">Fin</label>
-              {{ form_fechas.fin|add_class:"form-control form-control-sm" }}
-            </div>
-            <div class="col-12 mt-2">
-              <button type="submit" class="btn btn-primary btn-sm w-100">Consultar</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
+      <!-- Resultados -->
+      {% if saldo_inicial is not None %}
+      <div class="card shadow-sm border-0 mt-3">
+        <div class="card-body p-3">
+          <h6 class="fw-bold mb-1 text-primary">💼 Saldo al inicio:</h6>
+          <p class="mb-3"><strong>{{ saldo_inicial }} UYU</strong></p>
 
-  <!-- Resultados -->
-  {% if saldo_inicial is not None %}
-    <div class="card shadow-sm border-0 mt-3">
-      <div class="card-body p-3">
-        <h6 class="fw-bold mb-1 text-primary">💼 Saldo al inicio:</h6>
-        <p class="mb-3"><strong>{{ saldo_inicial }} UYU</strong></p>
-
-        <h6 class="fw-bold mb-2 text-primary">📑 Movimientos:</h6>
-        {% if movimientos %}
+          {% if movimientos %}
           <table class="table table-sm table-striped table-bordered align-middle text-center mb-3">
             <thead class="table-dark small">
               <tr>
@@ -70,51 +70,59 @@
                 <th>Descripción</th>
                 <th>Categoría</th>
                 <th>Monto</th>
-                <th>Moneda</th>
-                <th>Acciones</th>
               </tr>
             </thead>
             <tbody class="small">
               {% for mov in movimientos %}
-                <tr>
-                  <td>{{ mov.tipo_modelo }}</td>
-                  <td>{{ mov.date_movimiento|date:"d/m/Y" }}</td>
-                  <td>{{ mov.descripcion }}</td>
-                  <td>{{ mov.get_categoria_display }}</td>
-                  <td class="{% if mov.monto >= 0 %}text-success{% else %}text-danger{% endif %}">
-                    {{ mov.monto }}
-                  </td>
-                  <td>{{ mov.moneda }}</td>
-                  <td>
-                    {% if mov.tipo_modelo == "Ingresos" %}
-                      <a href="{% url 'update_ingreso' mov.uuid %}" class="btn btn-sm btn-outline-primary py-0 px-2">✏️</a>
-                      <a href="{% url 'delete_ingreso' mov.uuid %}" class="btn btn-sm btn-outline-danger py-0 px-2">🗑️</a>
-                    {% else %}
-                      <a href="{% url 'update_egreso' mov.uuid %}" class="btn btn-sm btn-outline-primary py-0 px-2">✏️</a>
-                      <a href="{% url 'delete_egreso' mov.uuid %}" class="btn btn-sm btn-outline-danger py-0 px-2">🗑️</a>
-                    {% endif %}
-                  </td>
-                </tr>
-              {% empty %}
-                <tr>
-                  <td colspan="7" class="text-muted small">No se encontraron movimientos.</td>
-                </tr>
+              <tr>
+                <td>{{ mov.tipo_modelo }}</td>
+                <td>{{ mov.date_movimiento|date:"d/m/Y" }}</td>
+                <td>{{ mov.descripcion }}</td>
+                <td>{{ mov.get_categoria_display }}</td>
+                <td class="{% if mov.monto >= 0 %}text-success{% else %}text-danger{% endif %}">
+                  {{ mov.monto }}
+                </td>
+              </tr>
               {% endfor %}
             </tbody>
           </table>
-        {% else %}
-          <div class="alert alert-info py-2 mb-2 small text-center">
-            No hay movimientos para este período.
-          </div>
-        {% endif %}
+          {% else %}
+          <p class="text-muted text-center small">No hay movimientos para este período.</p>
+          {% endif %}
 
-        <h6 class="fw-bold mb-1 text-primary">📊 Saldo final:</h6>
-        <h4 class="text-center {% if saldo_final >= 0 %}text-success{% else %}text-danger{% endif %} mb-0">
-          {{ saldo_final }} UYU
-        </h4>
+          <h6 class="fw-bold mb-1 text-primary">📊 Saldo final:</h6>
+          <h4 class="text-center {% if saldo_final >= 0 %}text-success{% else %}text-danger{% endif %} mb-0">
+            {{ saldo_final }} UYU
+          </h4>
+        </div>
       </div>
+      {% endif %}
     </div>
-  {% endif %}
+
+    <!-- === COLUMNA DERECHA: DASHBOARD === -->
+<div class="col-md-4">
+
+  <!-- 💰 Ingresos vs Egresos -->
+  <div class="card shadow-sm border-0 p-3 mb-3 fixed-card">
+    <h6 class="text-center fw-bold text-info">💰 Ingresos vs Egresos</h6>
+    <canvas id="comparativoChart"></canvas>
+  </div>
+
+  <!-- 💾 % de Ahorro -->
+  <div class="card shadow-sm border-0 p-3 mb-3 fixed-card">
+    <h6 class="text-center fw-bold text-success">💾 % de Ahorro</h6>
+    <canvas id="ahorroChart"></canvas>
+  </div>
+
+
+  <!-- 🥧 Distribución por Categoría -->
+  <div class="card shadow-sm border-0 p-3 fixed-card">
+    <h6 class="text-center fw-bold text-primary">🥧 Distribución de Gastos</h6>
+    <canvas id="egresosChart"></canvas>
+  </div>
+
+</div>
+</div>
 </div>
 
 <style>
@@ -123,5 +131,87 @@
   .table th, .table td { padding: 4px 6px !important; }
   .btn-sm { font-size: 0.8rem; border-radius: 6px; }
   h5, h6 { margin-bottom: 0.3rem !important; }
+
+  /* --- DASHBOARD CARDS --- */
+.fixed-card {
+  height: 260px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.fixed-card canvas {
+  flex-grow: 1;
+  max-height: 200px;
+}
 </style>
+
+<!-- Chart.js principal -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Plugin para mostrar valores dentro de los gráficos -->
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+
+  // Ingresos vs Egresos
+  new Chart(document.getElementById('comparativoChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Ingresos', 'Egresos'],
+      datasets: [{
+        data: [{{ ingresos_total }}, {{ egresos_total }}],
+        backgroundColor: ['#4caf50','#f44336']
+      }]
+    },
+    options: {
+      plugins: { legend: { display: false } },
+      scales: { y: { beginAtZero: true } }
+    }
+  });
+
+    // % de Ahorro
+    new Chart(document.getElementById('ahorroChart'), {
+      type: 'pie',
+      data: {
+        labels: ['Ahorro', 'Gastado'],
+        datasets: [{
+          data: [Number({{ ahorro_porcentaje }}), Number({{ gasto }})],
+          backgroundColor: ['#4caf50', '#ff9800'], 
+          borderColor: '#ffffff',
+          borderWidth: 2
+        }]
+      },
+      options: {
+        plugins: {
+          legend: { display: true, position: 'bottom' },
+          datalabels: {
+            color: '#fff',
+            formatter: (value) => value.toFixed(1) + '%',
+            font: { weight: 'bold', size: 14 }
+          }
+        }
+      },
+      plugins: [ChartDataLabels]
+    });
+
+
+  // Distribución de Gastos (horizontal bar)
+  new Chart(document.getElementById('egresosChart'), {
+    type: 'bar',
+    data: {
+      labels: {{ egresos_categorias|safe }},
+      datasets: [{
+        data: {{ egresos_monto_categoria|safe }},
+        backgroundColor: '#36a2eb'
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      plugins: { legend: { display: false } },
+      scales: { x: { beginAtZero: true } }
+    }
+  });
+
+});
+</script>
 {% endblock %}
