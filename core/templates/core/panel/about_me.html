@@ -1,34 +1,72 @@
 {% extends "core/base.html" %}
-{% block title %}About me{% endblock %}
+{% load static %}
+{% block title %}Sobre ChanchitApp{% endblock %}
 
 {% block content %}
-<div class="position-relative" style="min-height: 100vh;">
+<div class="container py-4 position-relative" style="min-height: 100vh;">
+  
+  <!-- Título principal -->
+  <h3 class="fw-bold text-center mb-4 text-success" style="margin-top: 20px;">
+    🐷 Sobre ChanchitApp y su creadora
+  </h3>
 
-  <!-- Contenido -->
-  <div class="container py-5">
-    <div class="card shadow-sm border-0 p-4">
-      <h2 class="fw-bold text-center mb-3 text-success">🐷 Sobre ChanchitApp</h2>
-      <p class="text-muted">
-        ChanchitApp es una aplicación pensada para ayudar a adolescentes a gestionar sus finanzas
-      personales de forma simple, visual y divertida.
-
-      </p>
-      <p class="text-muted">
-        Podés registrar tus ingresos, egresos y consultar tus movimientos. 
-      En las consultas se muestra un mini-análisis de datos, allí podrás ver 
-      los ingresos / egresos totales del período consultado, tu porcentaje de ahorro y cómo se distribuyen tus gastos.
-      También vas a poder agendar eventos y asignarles un monto deseado de ahorro. 
-      ¡ChanchitApp hará el seguimiento del cumplimiento de esa meta para ayudarte a cumplirla!
-
-      </p>
+  <div class="row justify-content-center g-4 mt-4">
+    
+    <!-- Card 1: Sobre ChanchitApp -->
+    <div class="col-md-6">
+      <div class="card shadow-lg border-0 h-100">
+        <div class="card-body text-center p-4 d-flex flex-column justify-content-between">
+          <div>
+            <h4 class="fw-bold text-success mb-3">Sobre ChanchitApp</h4>
+            <div class="text-muted" style="text-align: justify;">
+              <p>
+                <strong>ChanchitApp</strong> es una aplicación pensada para ayudarte a manejar tus 
+                finanzas personales de forma simple, visual y divertida.
+              </p>
+              <p>
+                Podés registrar tus ingresos, egresos y consultar tus movimientos. 
+                En las consultas se muestra un mini-análisis de datos, allí podrás ver 
+                los ingresos y egresos totales del período consultado, tu porcentaje de ahorro 
+                y cómo se distribuyen tus gastos.
+              </p>
+              <p>
+                También vas a poder agendar eventos y asignarles un monto deseado de ahorro. 
+                ¡ChanchitApp hará el seguimiento del cumplimiento de esa meta para ayudarte a cumplirla!
+              </p>
+            </div>
+          </div>
+          <img src="{% static 'img/Metas.png' %}" alt="ChanchitApp" class="mt-2 mx-auto" style="max-width: 170px;">
+        </div>
+      </div>
     </div>
+
+    <!-- Card 2: Sobre mí -->
+    <div class="col-md-6">
+      <div class="card shadow-lg border-0 h-100">
+        <div class="card-body text-center p-4 d-flex flex-column justify-content-between">
+          <div>
+            <h4 class="fw-bold text-success mb-3">Sobre mí</h4>
+            <div class="text-muted" style="text-align: justify;">
+              <p>
+                ¡Hola! Soy <strong>Mariana</strong>, la creadora de ChanchitApp ❤️
+              </p>
+              <p>
+                Soy Química Farmacéutica con muchos años de experiencia en Aseguramiento de Calidad.
+                He trabajado mucho en análisis de datos y en validación de sistemas informáticos.
+                Eso despertó mi deseo de profesionalizarme en ambas áreas, por lo que me diplomé como Tester de Software
+                y estoy estudiando formalmente Analítica de Datos.
+              </p>
+              <p>
+                Aprender Python fue un paso natural para unir todo eso: ciencia, lógica y curiosidad.
+                ChanchitApp nació de esa mezcla.. ¡y de mis ganas de crear algo útil, simple y con un toque de diversión!              </p>
+            </div>
+          </div>
+          <img src="{% static 'img/Autor.png' %}" alt="Creadora" class="mt-2 mx-auto" style="max-width: 180px;">
+        </div>
+      </div>
+    </div>
+
   </div>
-
-  <!-- Footer fijo al fondo -->
-  <footer class="text-center text-secondary small py-3 border-top bg-light w-100"
-          style="position: absolute; bottom: 0; left: 0;">
-    🐷 Desarrollado como parte del curso <strong>CoderHouse - Python</strong> — 2025
-  </footer>
-
 </div>
+
 {% endblock %}
