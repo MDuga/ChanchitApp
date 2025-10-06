@@ -102,22 +102,22 @@
     <!-- === COLUMNA DERECHA: DASHBOARD === -->
 <div class="col-md-4">
 
-  <!-- 💰 Ingresos vs Egresos -->
+  <!-- Ingresos vs Egresos -->
   <div class="card shadow-sm border-0 p-3 mb-3 fixed-card">
-    <h6 class="text-center fw-bold text-info">💰 Ingresos vs Egresos</h6>
+    <h6 class="text-center fw-bold text-info">Ingresos vs Egresos</h6>
     <canvas id="comparativoChart"></canvas>
   </div>
 
-  <!-- 💾 % de Ahorro -->
+  <!-- % de Ahorro -->
   <div class="card shadow-sm border-0 p-3 mb-3 fixed-card">
-    <h6 class="text-center fw-bold text-success">💾 % de Ahorro</h6>
+    <h6 class="text-center fw-bold text-success">% de Ahorro</h6>
     <canvas id="ahorroChart"></canvas>
   </div>
 
 
-  <!-- 🥧 Distribución por Categoría -->
+  <!-- Distribución por Categoría -->
   <div class="card shadow-sm border-0 p-3 fixed-card">
-    <h6 class="text-center fw-bold text-primary">🥧 Distribución de Gastos</h6>
+    <h6 class="text-center fw-bold text-primary">Distribución de Gastos</h6>
     <canvas id="egresosChart"></canvas>
   </div>
 
@@ -160,7 +160,7 @@ document.addEventListener("DOMContentLoaded", function() {
       labels: ['Ingresos', 'Egresos'],
       datasets: [{
         data: [{{ ingresos_total }}, {{ egresos_total }}],
-        backgroundColor: ['#4caf50','#f44336']
+        backgroundColor: ['#81C784', '#E57373']
       }]
     },
     options: {
@@ -173,10 +173,10 @@ document.addEventListener("DOMContentLoaded", function() {
     new Chart(document.getElementById('ahorroChart'), {
       type: 'pie',
       data: {
-        labels: ['Ahorro', 'Gastado'],
+        labels: ['Ahorrado', 'Gastado'],
         datasets: [{
           data: [Number({{ ahorro_porcentaje }}), Number({{ gasto }})],
-          backgroundColor: ['#4caf50', '#ff9800'], 
+          backgroundColor: ['#81C784', '#FFB74D'], 
           borderColor: '#ffffff',
           borderWidth: 2
         }]
@@ -195,23 +195,58 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
 
-  // Distribución de Gastos (horizontal bar)
-  new Chart(document.getElementById('egresosChart'), {
-    type: 'bar',
-    data: {
-      labels: {{ egresos_categorias|safe }},
-      datasets: [{
-        data: {{ egresos_monto_categoria|safe }},
-        backgroundColor: '#36a2eb'
-      }]
-    },
-    options: {
-      indexAxis: 'y',
-      plugins: { legend: { display: false } },
-      scales: { x: { beginAtZero: true } }
-    }
-  });
+  // Distribución de Gastos (horizontal bar en %)
+  (() => {
+    const egresosMontos = {{ egresos_monto_categoria|safe }};
+    const egresosCategorias = {{ egresos_categorias|safe }};
+    const egresosAbs = egresosMontos.map(v => Math.abs(v));
+    const total = egresosAbs.reduce((a, b) => a + b, 0);
+    console.log("Total egresos:", total, "Valores absolutos:", egresosAbs);
+    const porcentajes = egresosAbs.map(v => ((v / total) * 100).toFixed(1));
 
-});
+
+    if (total > 0) {
+      const porcentajes = egresosAbs.map(v => ((v / total) * 100).toFixed(1));
+
+      new Chart(document.getElementById('egresosChart'), {
+        type: 'bar',
+        data: {
+          labels: egresosCategorias,
+          datasets: [{
+            data: porcentajes,
+            backgroundColor: '#36a2eb'
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: ctx => ctx.parsed.x + '%'
+              }
+            },
+            datalabels: {
+              color: '#fff',
+              formatter: v => v + '%',
+              font: { weight: 'bold', size: 12 }
+            }
+          },
+          scales: {
+            x: {
+              beginAtZero: true,
+              title: { display: true, text: '% del total de egresos' }
+            }
+          }
+        },
+        plugins: [ChartDataLabels]
+      });
+    } else {
+      console.warn("No hay egresos para graficar");
+    }
+  })();
+
+}); // 👈 este es el cierre del addEventListener
 </script>
 {% endblock %}
+
