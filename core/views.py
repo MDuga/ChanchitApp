@@ -180,7 +180,15 @@ def query(request):
     saldo_inicial = saldo_inicial_query(request, usuario, date_inicio)      
     saldo_final = 0
     movimientos = []
+    ingresos = []
+    egresos = []
     movimientos_monto = 0
+    ingresos_monto = 0
+    egresos_monto = 0
+    ingresos_categorias = []
+    ingresos_monto_categoria = []
+    egresos_categorias = []
+    egresos_monto_categoria = []
 
     tipo_movimientos = [
         (Ingresos, 'date_movimiento', 'Ingresos'),
@@ -200,6 +208,22 @@ def query(request):
                 i.tipo_modelo = tipo  
                 movimientos_monto += i.monto
                 movimientos.append(i)
+
+                if tipo == "Ingresos":
+                    ingresos_monto += i.monto
+                    ingresos.append(i)
+                else:
+                    egresos_monto += i.monto
+                    egresos.append(i)
+            
+            for e in ingresos:
+                ingresos_categorias.append(e.categoria)
+                ingresos_monto_categoria.append(e.monto)
+
+            for e in egresos:
+                egresos_categorias.append(e.categoria)
+                egresos_monto_categoria.append(e.monto)
+                        
             
         saldo_final = saldo_inicial + movimientos_monto
         movimientos.sort(key=lambda x: x.date_movimiento)
@@ -212,6 +236,14 @@ def query(request):
         "form_fechas": rango_fechas,
         "saldo_inicial": saldo_inicial,
         "movimientos": movimientos,
+        "ingresos": ingresos,
+        "egresos": egresos,
+        "ingresos_categorias": ingresos_categorias,
+        "ingresos_monto_categoria": ingresos_monto_categoria,
+        "ingresos_total": ingresos_monto,
+        "egresos_total": egresos_monto,
+        "egresos_categorias": egresos_categorias,
+        "egresos_monto_categoria": egresos_monto_categoria,
         "saldo_final": saldo_final
     }
     return render(request, "core/movimientos/query.html", contexto)
