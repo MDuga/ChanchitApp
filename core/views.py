@@ -18,6 +18,12 @@ def pagina_principal(request):
     return render(request, 'core/panel/principal.html')
 
 #====================================================================================
+def about_me(request):
+
+    return render(request, "core/panel/about_me.html")
+
+#====================================================================================
+
 
 @login_required
 def pagina_inicio(request):

@@ -1,0 +1,34 @@
+{% extends "core/base.html" %}
+{% block title %}About me{% endblock %}
+
+{% block content %}
+<div class="position-relative" style="min-height: 100vh;">
+
+  <!-- Contenido -->
+  <div class="container py-5">
+    <div class="card shadow-sm border-0 p-4">
+      <h2 class="fw-bold text-center mb-3 text-success">🐷 Sobre ChanchitApp</h2>
+      <p class="text-muted">
+        ChanchitApp es una aplicación pensada para ayudar a adolescentes a gestionar sus finanzas
+      personales de forma simple, visual y divertida.
+
+      </p>
+      <p class="text-muted">
+        Podés registrar tus ingresos, egresos y consultar tus movimientos. 
+      En las consultas se muestra un mini-análisis de datos, allí podrás ver 
+      los ingresos / egresos totales del período consultado, tu porcentaje de ahorro y cómo se distribuyen tus gastos.
+      También vas a poder agendar eventos y asignarles un monto deseado de ahorro. 
+      ¡ChanchitApp hará el seguimiento del cumplimiento de esa meta para ayudarte a cumplirla!
+
+      </p>
+    </div>
+  </div>
+
+  <!-- Footer fijo al fondo -->
+  <footer class="text-center text-secondary small py-3 border-top bg-light w-100"
+          style="position: absolute; bottom: 0; left: 0;">
+    🐷 Desarrollado como parte del curso <strong>CoderHouse - Python</strong> — 2025
+  </footer>
+
+</div>
+{% endblock %}
