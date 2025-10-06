@@ -128,7 +128,7 @@
                       {% if day == 0 %}
                         <div class="calendar-day empty"></div>
                       {% else %}
-                        <div class="calendar-day {% if day in eventos_actual_days %}has-event{% endif %}"
+                        <div class="calendar-day {% if day in eventos_actual_day %}has-event{% endif %}"
                             {% for e in eventos_actual %}
                               {% if e.date_evento.day == day %}
                                 title="{{ e.titulo }} - {{ e.monto }} {{ e.moneda }}"
@@ -182,7 +182,14 @@
                       {% if day == 0 %}
                         <div class="calendar-day empty"></div>
                       {% else %}
-                        <div class="calendar-day">{{ day }}</div>
+                        <div class="calendar-day {% if day in eventos_next_day %}has-event{% endif %}"
+                            {% for e in eventos_actual %}
+                              {% if e.date_evento.day == day %}
+                                title="{{ e.titulo }} - {{ e.monto }} {{ e.moneda }}"
+                              {% endif %}
+                            {% endfor %}>
+                          {{ day }}
+                        </div>
                       {% endif %}
                     {% endfor %}
                   </div>
