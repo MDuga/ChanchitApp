@@ -165,11 +165,21 @@ def query(request):
     if not request.GET:  
         return render(request, "core/movimientos/query.html", {
             "usuario": usuario,
-            "form_mes": QueryMes_Form(),    
+            "form_mes": QueryMes_Form(),
             "form_fechas": QueryFechas_Form(),
-            "saldo_inicial": None,           
-            "movimientos": None,           
-            "saldo_final": None
+            "saldo_inicial": 0,
+            "movimientos": [],
+            "ingresos": [],
+            "egresos": [],
+            "ingresos_categorias": json.dumps([]),
+            "ingresos_monto_categoria": json.dumps([]),
+            "ingresos_total": 0,
+            "egresos_total": 0,
+            "ahorro_porcentaje": 0,
+            "gasto": 0,
+            "egresos_categorias": json.dumps([]),
+            "egresos_monto_categoria": json.dumps([]),
+            "saldo_final": 0,
         })
 
     date_inicio, date_fin, month_year, rango_fechas = seleccion_query(request)
@@ -178,10 +188,20 @@ def query(request):
         return render(request, "core/movimientos/query.html", {
             "usuario": usuario,
             "form_mes": month_year,
-            "form_fechas": rango_fechas,            
+            "form_fechas": rango_fechas,
             "saldo_inicial": 0,
             "movimientos": [],
-            "saldo_final": 0
+            "ingresos": [],
+            "egresos": [],
+            "ingresos_categorias": json.dumps([]),
+            "ingresos_monto_categoria": json.dumps([]),
+            "ingresos_total": 0,
+            "egresos_total": 0,
+            "ahorro_porcentaje": 0,
+            "gasto": 0,
+            "egresos_categorias": json.dumps([]),
+            "egresos_monto_categoria": json.dumps([]),
+            "saldo_final": 0,
         })
            
     saldo_inicial = saldo_inicial_query(request, usuario, date_inicio)      
@@ -280,22 +300,25 @@ class IngresoUpdateView(LoginRequiredMixin, UpdateView):
     slug_url_kwarg = "uuid"
     success_url = reverse_lazy("query")
 
+    
     def get_queryset(self):
         return Ingresos.objects.filter(usuario=self.request.user)
-
+    
 
 #====================================================================================
 class EgresoUpdateView(LoginRequiredMixin, UpdateView):
     model = Egresos
     template_name = "core/movimientos/egresos_form.html"
     form_class = EgresosForm
-    #fields = ["monto", "descripcion", "categoria", "date_movimiento"]
     slug_field = "uuid"
     slug_url_kwarg = "uuid"
     success_url = reverse_lazy("query")
+   
 
     def get_queryset(self):
         return Egresos.objects.filter(usuario=self.request.user)
+    
+    
 
 
 #====================================================================================
@@ -306,9 +329,10 @@ class IngresoDeleteView(LoginRequiredMixin, DeleteView):
     slug_url_kwarg = "uuid"
     success_url = reverse_lazy("query")
 
+    
     def get_queryset(self):
         return Ingresos.objects.filter(usuario=self.request.user)
-
+  
 
 #====================================================================================
 class EgresoDeleteView(LoginRequiredMixin, DeleteView):
@@ -317,6 +341,8 @@ class EgresoDeleteView(LoginRequiredMixin, DeleteView):
     slug_field = "uuid"
     slug_url_kwarg = "uuid"
     success_url = reverse_lazy("query")
+
+    
 
     def get_queryset(self):
         return Egresos.objects.filter(usuario=self.request.user)

@@ -31,4 +31,4 @@ class Evento(models.Model):
     
 
     def __str__(self):
-        return f"{self.descripcion} ({self.get_estado_display()}) - {self.date_evento}"
+        return f"{self.titulo} ({self.get_estado_display()}) - {self.date_evento}"

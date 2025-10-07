@@ -45,6 +45,7 @@ class EgresosForm(forms.ModelForm):
         return -monto
     
 #========================================================================
+# Para hacer búsqueda por mes / año
 class QueryMes_Form(forms.Form):
     
     month = forms.IntegerField(min_value=1, max_value=12, label="Mes")
