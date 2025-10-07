@@ -207,7 +207,7 @@
 
 {% block extra_scripts %}
 <style>
-    /* --- Reduce tamaño de filtros --- */
+    
     form.row.g-2.mb-3 select,
     form.row.g-2.mb-3 input[type="date"],
     form.row.g-2.mb-3 button,
@@ -217,12 +217,10 @@
       height: 30px;
     }
 
-    /* Botones más compactos */
     form.row.g-2.mb-3 .btn {
       border-radius: 6px;
     }
 
-    /* Centra el título solo dentro de la columna izquierda */
     .col-md-8 > h2 {
       text-align: center;
       width: 100%;
@@ -232,24 +230,21 @@
       margin-top: -10px;
       margin-bottom: 12px;
       position: relative;
-      left: 00; /* asegúrate de que no haya desplazamiento */
+      left: 00; 
     }
 
-    /* Tamaño de texto general más pequeño */
     .table,
     .table th,
     .table td {
-      font-size: 0.85rem;        /* letras más chicas */
-      padding: 4px 4px;          /* filas más compactas */
+      font-size: 0.85rem;        
+      padding: 4px 4px;          
     }
 
-    /* Encabezado un poco más fino */
     thead.table-dark th {
       font-size: 0.85rem;
       padding: 8px 8px;
     }
 
-    /* Inputs y selects de filtros más pequeños */
     form.row.g-2.mb-3 select,
     form.row.g-2.mb-3 input[type="date"],
     form.row.g-2.mb-3 button,
@@ -259,13 +254,11 @@
       height: 34px;
     }
 
-    /* --- Subir el panel derecho --- */
     .card-proximos {
-      margin-top: -10px; /* ajustá el valor a gusto: -30 o -50 según altura */
+      margin-top: -10px; 
       max-height: 86vh;
     }
 
-    /* --- Ajuste general de columnas --- */
     .row > .col-md-9 {
       padding-right: 1rem;
     }
@@ -274,7 +267,6 @@
       padding-left: 0.5rem;
     }
 
-    /* --- Mejor balance visual entre ambas columnas --- */
   .col-md-8 {
     position: relative;
   }
@@ -347,8 +339,8 @@
   .calendar-day.empty { background: transparent; }
 
   .card-proximos hr {
-  margin-top: 0px !important;     /* elimina espacio superior */
-  margin-bottom: 2px !important;  /* deja un poquito antes del título siguiente */
+  margin-top: 0px !important;     
+  margin-bottom: 2px !important;  
   }
 
 </style>

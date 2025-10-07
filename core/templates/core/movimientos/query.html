@@ -70,7 +70,7 @@
                 <th>Descripción</th>
                 <th>Categoría</th>
                 <th>Monto</th>
-                <th>Acciones</th>  <!-- 👈 Nueva columna -->
+                <th>Acciones</th>
               </tr>
             </thead>
             <tbody class="small">
@@ -208,19 +208,17 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
 
-  // 🥧 Distribución de Gastos (agrupada por categoría, en %)
+  // Distribución de Gastos
   (() => {
     const categorias = {{ egresos_categorias|safe }};
     const montos = {{ egresos_monto_categoria|safe }};
-
-    // Convertir a positivos y agrupar por categoría
+    
     const agrupados = {};
     categorias.forEach((cat, i) => {
       const valor = Math.abs(montos[i]);
       agrupados[cat] = (agrupados[cat] || 0) + valor;
     });
 
-    // Obtener arrays finales
     const categoriasUnicas = Object.keys(agrupados);
     const montosAgrupados = Object.values(agrupados);
 
