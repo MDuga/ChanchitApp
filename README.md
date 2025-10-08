@@ -1,6 +1,8 @@
 ChanchitApp es una aplicación web para el control de finanzas personales. 
 Está pensado para adolescentes que recién comienzan a gestionar su dinero.
 
+VIDEO EXPLICATIVO: https://drive.google.com/drive/folders/1J9J8RxTstap-e-1TNKBzOKKh7GlNnZ4K?usp=sharing
+
 INSTALACIÓN Y EJECUCIÓN
 
 1) Posicionarse en carpeta raiz
