@@ -1,3 +1,11 @@
+ChanchitApp is a personal finance web app built with Django.
+It allows users to register, log in, and manage their incomes and expenses through a clean and simple interface.
+The project also includes balance queries and visual summaries made with Bootstrap and Chart.js, tools I explored while developing the app.
+
+I created ChanchitApp as a learning project to keep improving my skills in Python, Django, and web development — step by step, and with curiosity.
+
+########################################################################################################################################################
+
 ChanchitApp es una aplicación web para el control de finanzas personales. 
 Está pensado para adolescentes que recién comienzan a gestionar su dinero.
 
