@@ -1,77 +1,96 @@
-ChanchitApp is a personal finance web app built with Django.
-It allows users to register, log in, and manage their incomes and expenses through a clean and simple interface.
-The project also includes balance queries and visual summaries made with Bootstrap and Chart.js, tools I explored while developing the app.
+# 🐷 ChanchitApp  
 
-I created ChanchitApp as a learning project to keep improving my skills in Python, Django, and web development — step by step, and with curiosity.
+**English summary:**  
+ChanchitApp is a personal finance web app built with **Django**.  
+It allows users to register, log in, and manage their incomes and expenses through a clean and simple interface.  
+The project also includes balance queries and visual summaries made with **Bootstrap** and **Chart.js**, tools I explored while developing the app.  
 
-########################################################################################################################################################
+💡 I created ChanchitApp as a learning project to keep improving my skills in Python, Django, and web development — step by step, and with curiosity.
 
-ChanchitApp es una aplicación web para el control de finanzas personales. 
-Está pensado para adolescentes que recién comienzan a gestionar su dinero.
+---
 
-VIDEO EXPLICATIVO: https://drive.google.com/drive/folders/1J9J8RxTstap-e-1TNKBzOKKh7GlNnZ4K?usp=sharing
+## 🇪🇸 Descripción general  
 
-INSTALACIÓN Y EJECUCIÓN
+**ChanchitApp** es una aplicación web para el control de finanzas personales, pensada para adolescentes que recién comienzan a gestionar su dinero.  
 
-1) Posicionarse en carpeta raiz
-2) Crear un entorno virtual e ingresar al mismo
-3) Instalar el archivo requirements.txt
-4) Aplicar migraciones
-5) Ejecutar el servidor
-6) En el navegador ingresar al sitio: http://localhost:8000/
+🎥 **Video explicativo:**  
+[Ver en Google Drive](https://drive.google.com/drive/folders/1J9J8RxTstap-e-1TNKBzOKKh7GlNnZ4K?usp=sharing)
 
-EXPLICATIVA DE LA APLICACIÓN
+---
 
-Página principal: página para presentación de la aplicación. 
-Se incluyen las siguientes acciones en la misma:
+## ⚙️ Instalación y ejecución  
 
-Registro de usuario: el registro se realiza mediante dirección de correo electrónico, nombre de usuario y contraseña. 
-En caso de registro de usuario exitoso se redirecciona a página de inicio.
+1. Posicionarse en la carpeta raíz del proyecto.  
+2. Crear un entorno virtual e ingresar al mismo.  
+3. Instalar dependencias desde `requirements.txt`.  
+4. Aplicar migraciones (`python manage.py migrate`).  
+5. Ejecutar el servidor (`python manage.py runserver`).  
+6. Ingresar en el navegador: [http://localhost:8000/](http://localhost:8000/)
 
-Login de usuario: el ingreso de usuario se realiza usando dirección de correo registrada y contraseña. 
-En caso de login de usuario exitoso se redirecciona a página de inicio.
+---
 
+## 💻 Funcionalidades principales  
 
-Página de inicio: a esta página se accede con el usuario logueado.
-El usuario se puede visualizar en la esquina superior derecha de la página.
-Haciendo click en el usuario se puede acceder a la edición de los datos de usuario, donde se puede cambiar el avatar. 
-Al lado del mismo se incluye un botón para cerrar sesión.
+### 🏠 Página principal  
+Muestra una vista general con acceso a todas las secciones del sistema mediante:  
+- 4 tarjetas superiores: **Ingresos**, **Egresos**, **Consultas**, **Eventos**  
+- Menú lateral con las mismas opciones + **About me**
 
-En la página de inicio Se muestran 4 tarjetas superiores desde donde se puede acceder a las diferentes acciones: 
-- ingresos 
-- egresos 
-- consultas 
-- eventos.
-A estas acciones también se puede acceder mediante un menú fijo a la izquierda de la pantalla en donde se agrega al listado el acceso al About me.
+Además, incluye dos tarjetas inferiores:
+- **Saldo actual:** muestra distintas imágenes según sea positivo, negativo o cero.  
+- **Próximos eventos:** lista del mes con metas de ahorro y mensajes motivacionales.
 
-En la parte inferior se muestran 2 tarjetas:
-- saldo
-- próximos eventos
+---
 
-En la tarjeta izquierda se muestra el saldo a la fecha, mostrándose diferentes imágenes según el saldo (saldo positivo, negativo o cero).
-En la tarjeta derecha se muestran los eventos agendados para el mes corriente, indicando el monto deseado de ahorro para los mismos y el estado. También se agerga un mensaje / imagen relacionada al cumplimiento o no de la meta de ahorro establecida para ese mes.
+### 👤 Gestión de usuarios  
+- Registro mediante correo electrónico, usuario y contraseña.  
+- Login y logout con redirección a la página de inicio.  
+- Edición de datos y cambio de avatar desde el perfil del usuario.
 
-Las acciones se describen a continuación: 
-Ingresos: 
-Formulario para el registro de ingresos, requiriendo ingresar el monto, la descripción y la fecha de ingreso. Esta fecha será utilizada posteriormente para “Consultas”.
-En esta etapa se estableció el uso de una única moneda (pesos uruguayos - UYU) para simplificar el proceso.
+---
 
-EGRESOS:
-Formulario para el registro de egresos (salidas), requiriendo ingresar el monto, la descripción y la f echa de egreso. Esta fecha será utilizada posteriormente para “Consultas”.
-En esta etapa se estableció el uso de una única moneda (pesos uruguayos - UYU) para simplificar el proceso.
+### 💰 Ingresos y egresos  
+Formularios para registrar movimientos de dinero, indicando:
+- Monto, descripción, fecha y categoría.  
+- Moneda única: **pesos uruguayos (UYU)** para simplificar el proceso.  
+- CRUD completo (crear, editar, eliminar).  
 
-CONSULTAS:
-Formulario para hacer consultas de movimientos en un mes/año específico o en un período establecido. 
-Se muestra el saldo al inicio del período consultado, los movimientos (ingresos / egresos) ordenados por fecha y el saldo al finalizar ese período.
-En cada una de las líneas de los movimientos se encuentran botones que permiten editar o eliminar movimientos (previa confirmación).
-En esta página se muestra a la derecha un mini- análisis de los datos del período, donde se muestran los siguientes gráficos:
-- ingresos vs egresos
-- % Ahorro
-- Distribución de gastos
+---
 
-EVENTOS:
-Formulario para registrar eventos  y establecer un monto estimado de ahorro para el mismo.
-Del lado derecho de la página se muestran los eventos para el mes actual y siguiente en los calendarios.
-Para el mes actual se muestra el monto total deseado de ahorro (meta), el saldo actual y el faltante (en caso de haber). También se muestra un mensaje motivador / imagen para el usuario. Etsa información se muestra también en la pçagina de inicio.
+### 📊 Consultas  
+Permite consultar movimientos por mes/año o por rango de fechas.  
+Muestra:
+- Saldo inicial, movimientos ordenados y saldo final.  
+- Botones para editar o eliminar cada movimiento.  
+- Panel lateral con mini análisis y gráficos:  
+  - Ingresos vs egresos  
+  - Porcentaje de ahorro  
+  - Distribución de gastos  
+
+---
+
+### 📆 Eventos  
+Formulario para registrar eventos y metas de ahorro.  
+En la vista lateral se muestran calendarios con:
+- Eventos del mes actual y siguiente.  
+- Meta de ahorro, saldo y faltante.  
+- Mensajes motivadores e imágenes dinámicas.  
+(Esta información también se muestra en la página de inicio).
+
+---
+
+## 🧩 Tecnologías  
+- **Backend:** Django (Python)  
+- **Frontend:** HTML, CSS, Bootstrap  
+- **Base de datos:** SQLite  
+- **Visualización:** Chart.js  
+- **Control de versiones:** Git y GitHub  
+
+---
+
+## 🐷 Autor  
+Proyecto educativo desarrollado como parte del aprendizaje en Python y desarrollo web.  
+Su objetivo es aplicar buenas prácticas de Django y explorar herramientas visuales y motivacionales para usuarios jóvenes.  
+
 
 
